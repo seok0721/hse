@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Server" namespace="Server.Domain">
+  <class name="Document" table="TBL_DOCUMENT" >
+    <id       name="DocumentId"      column="DOC_ID"   type="int"      />
+    <property name="URL"             column="DOC_URL"  type="String"   />
+    <property name="CreatedDateTime" column="DOC_TIME" type="DateTime" />
+  </class>
+</hibernate-mapping>
