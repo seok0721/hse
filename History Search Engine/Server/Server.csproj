@@ -69,13 +69,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dao\DocumentDao.cs" />
-    <Compile Include="Dao\FileDao.cs" />
-    <Compile Include="Dao\FileLogDao.cs" />
-    <Compile Include="Dao\FileStatistic.cs" />
-    <Compile Include="Dao\KeywordDao.cs" />
-    <Compile Include="Dao\RelationDao.cs" />
-    <Compile Include="Dao\UserDao.cs" />
     <Compile Include="Domain\Document.cs" />
     <Compile Include="Domain\FileModel.cs" />
     <Compile Include="Domain\FileLog.cs" />
