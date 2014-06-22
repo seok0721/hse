@@ -11,20 +11,22 @@ namespace Client.Http_Parser
 {
     class HttpPacketCapture
     {
-        private ICaptureDevice device;
+        private CaptureDeviceList devices;
 
-        /**
-         * Default Constructor
-         **/
+        /// <summary>
+        /// Basic constructor of this class
+        /// </summary>
         public HttpPacketCapture()
         {
-            device = null;
+            devices = CaptureDeviceList.Instance;
         }
 
+        /// <summary>
+        /// Get available ethernet device list
+        /// </summary>
+        /// <returns>Ethternet device list</returns>
         public CaptureDeviceList getEthernetDeviceList()
         {
-            var devices = CaptureDeviceList.Instance;
-
             if (devices.Count < 1)
             {
                 return null;
@@ -32,12 +34,24 @@ namespace Client.Http_Parser
             return devices;
         }
 
-        public void setDevice(ICaptureDevice device)
+        /// <summary>
+        /// Capture the packet from all devices
+        /// </summary>
+        /// <param name="timeout"></param>
+        public void start(int timeout)
         {
-            this.device = device;
+            foreach(ICaptureDevice device in devices)
+            {
+                start(timeout, device);
+            }
         }
 
-        public void start(int timeout)
+        /// <summary>
+        /// Capturedevice the packet form specific 
+        /// </summary>
+        /// <param name="timeout"></param>
+        /// <param name="device"></param>
+        public void start(int timeout, ICaptureDevice device)
         {
             device.OnPacketArrival += new SharpPcap.PacketArrivalEventHandler(onPacketArrival);
             device.Open(DeviceMode.Promiscuous, timeout);
@@ -46,7 +60,10 @@ namespace Client.Http_Parser
 
         public void stop()
         {
-            device.StopCapture();
+            foreach(ICaptureDevice device in devices) 
+            {
+                device.StopCapture();
+            }
         }
 
         private void onPacketArrival(object sender, CaptureEventArgs e)
