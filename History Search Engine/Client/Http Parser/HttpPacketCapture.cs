@@ -9,6 +9,8 @@ using PacketDotNet;
 
 namespace Client.Http_Parser
 {
+    public delegate void HttpPacketHandler(object sender, EventArgs e);
+
     class HttpPacketCapture
     {
         private CaptureDeviceList devices;
@@ -66,12 +68,25 @@ namespace Client.Http_Parser
             }
         }
 
-        private void onPacketArrival(object sender, CaptureEventArgs e)
+        private static void onPacketArrival(object sender, CaptureEventArgs e)
         {
             DateTime time = e.Packet.Timeval.Date;
             int len = e.Packet.Data.Length;
-            Console.WriteLine("{0}:{1}:{2}:{3} Len={4}", time.Hour, time.Minute, time.Second, time.Millisecond, len);
-            Console.WriteLine("{0}", e.Packet.Data);
+            var rawSourcePort = new Byte[2];
+            Array.Copy(e.Packet.Data, 15, rawSourcePort, 0, 2);
+            string sourcePort = ByteArrayToString(rawSourcePort);
+            System.Diagnostics.Debug.WriteLine("{0}:{1}:{2} Source Port={3}", time.Hour, time.Minute, time.Second, sourcePort);
+            if (sourcePort == "0005")
+            {
+                Console.WriteLine("{0}:{1}:{2}:{3} Len={4}", time.Hour, time.Minute, time.Second, time.Millisecond, len);
+                Console.WriteLine("{0}", sourcePort);
+            }
+        }
+
+        private static string ByteArrayToString(byte[] array)
+        {
+            string hex = BitConverter. ToString(array);
+            return hex.Replace("-", "");
         }
     }
 }
