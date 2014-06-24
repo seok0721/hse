@@ -27,7 +27,7 @@ namespace Client.Http_Parser
         /// Get available ethernet device list
         /// </summary>
         /// <returns>Ethternet device list</returns>
-        public CaptureDeviceList getEthernetDeviceList()
+        public CaptureDeviceList GetEthernetDeviceList()
         {
             if (devices.Count < 1)
             {
@@ -40,11 +40,11 @@ namespace Client.Http_Parser
         /// Capture the packet from all devices
         /// </summary>
         /// <param name="timeout"></param>
-        public void start(int timeout)
+        public void Start(int timeout)
         {
             foreach(ICaptureDevice device in devices)
             {
-                start(timeout, device);
+                Start(timeout, device);
             }
         }
 
@@ -53,14 +53,14 @@ namespace Client.Http_Parser
         /// </summary>
         /// <param name="timeout"></param>
         /// <param name="device"></param>
-        public void start(int timeout, ICaptureDevice device)
+        public void Start(int timeout, ICaptureDevice device)
         {
-            device.OnPacketArrival += new SharpPcap.PacketArrivalEventHandler(onPacketArrival);
+            device.OnPacketArrival += new SharpPcap.PacketArrivalEventHandler(OnPacketArrival);
             device.Open(DeviceMode.Promiscuous, timeout);
             device.StartCapture();
         }
 
-        public void stop()
+        public void Stop()
         {
             foreach(ICaptureDevice device in devices) 
             {
@@ -68,7 +68,7 @@ namespace Client.Http_Parser
             }
         }
 
-        private static void onPacketArrival(object sender, CaptureEventArgs e)
+        private static void OnPacketArrival(object sender, CaptureEventArgs e)
         {
             DateTime time = e.Packet.Timeval.Date;
             int len = e.Packet.Data.Length;
