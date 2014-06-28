@@ -72,18 +72,19 @@ namespace Client.Http_Parser
             DateTime time = e.Packet.Timeval.Date;
             int len = e.Packet.Data.Length;
 
-            var rawSourcePort = new Byte[2];
-            Array.Copy(e.Packet.Data, 34, rawSourcePort, 0, 2);
-            string sourcePort = ByteArrayToString(rawSourcePort);
+            RawCapture rawCapture = e.Packet;
+            Packet packet = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
 
-            var rawDesinationPort = new Byte[2];
-            Array.Copy(e.Packet.Data, 36, rawDesinationPort, 0, 2);
-            string desinationPort = ByteArrayToString(rawDesinationPort);
+            TcpPacket tcpPacket = TcpPacket.GetEncapsulated(packet);
 
-            if (String.Compare(sourcePort,"0050")==0 || String.Compare(desinationPort, "0050")==0)
+            if (tcpPacket != null)
             {
-                Console.WriteLine("{0}:{1}:{2}:{3} Len={4}", time.Hour, time.Minute, time.Second, time.Millisecond, len);
-                Console.WriteLine("{0}", ByteArrayToString(e.Packet.Data));
+                /// Filtering HTTP Packet using source port and desination port
+                if (tcpPacket.SourcePort == 80 || tcpPacket.DestinationPort == 80)
+                {
+                    Console.WriteLine("{0}:{1}:{2}:{3} Len={4}", time.Hour, time.Minute, time.Second, time.Millisecond, len);
+                    Console.WriteLine("{0}", Encoding.ASCII.GetString(packet.PayloadPacket.PayloadPacket.PayloadData));
+                }
             }
         }
 
