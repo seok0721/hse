@@ -82,8 +82,12 @@ namespace Client.Http_Parser
                 /// Filtering HTTP Packet using source port and desination port
                 if (tcpPacket.SourcePort == 80 || tcpPacket.DestinationPort == 80)
                 {
-                    Console.WriteLine("{0}:{1}:{2}:{3} Len={4}", time.Hour, time.Minute, time.Second, time.Millisecond, len);
-                    Console.WriteLine("{0}", Encoding.ASCII.GetString(packet.PayloadPacket.PayloadPacket.PayloadData));
+                    string httpPacketBody = Encoding.UTF8.GetString(packet.PayloadPacket.PayloadPacket.PayloadData);
+                    int contentTypeIndex = httpPacketBody.IndexOf("Content-Type: text/html;");
+                    if (contentTypeIndex != -1)
+                    {
+                        Console.WriteLine("{0}", httpPacketBody);
+                    }
                 }
             }
         }
