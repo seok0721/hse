@@ -109,7 +109,6 @@ namespace Client.Http_Parser
                             }
                             catch (ArgumentException exep)
                             {
-                                Debug.WriteLine("{0} {1}", tcpPacket.SequenceNumber, tcpPacket.AcknowledgmentNumber);
                                 Debug.WriteLine(exep.Message);
                             }
                         }
