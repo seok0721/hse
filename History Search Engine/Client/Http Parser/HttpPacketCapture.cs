@@ -20,7 +20,7 @@ namespace Client.Http_Parser
         private const int HTTP_PORT = 80;    // HTTP packet port
         private const int HTTPS_PORT = 443;  // HTTPS packet port
 
-        private static Queue<HttpPacket> readyAssembleHttpPacket;
+        private static List<HttpPacket> readyAssembleHttpPacket;
         private static Queue<uint> seqNumbers;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Client.Http_Parser
         public HttpPacketCapture()
         {
             devices = CaptureDeviceList.Instance;
-            readyAssembleHttpPacket = new Queue<HttpPacket>();
+            readyAssembleHttpPacket = new List<HttpPacket>();
             seqNumbers = new Queue<uint>();
         }
 
@@ -105,10 +105,11 @@ namespace Client.Http_Parser
                         {
                             try
                             {
-                                readyAssembleHttpPacket.Enqueue(new HttpPacket(packet));
+                                readyAssembleHttpPacket.Add(new HttpPacket(packet));
                             }
                             catch (ArgumentException exep)
                             {
+                                Debug.WriteLine("{0} {1}", tcpPacket.SequenceNumber, tcpPacket.AcknowledgmentNumber);
                                 Debug.WriteLine(exep.Message);
                             }
                         }
@@ -117,17 +118,17 @@ namespace Client.Http_Parser
                     {
                         foreach (HttpPacket element in readyAssembleHttpPacket)
                         {
-                            if (element.NextSequenceNumber == tcpPacket.SequenceNumber)
+                            if (element.NextSequenceNumber == tcpPacket.SequenceNumber && !element.IsAssembleEnded)
                             {
                                 // Check assembling work is done
                                 if(element.AssembleTcpPacket(packet))
                                 {
-                                    Debug.WriteLine("{0}", element.Protocol);
+                                    Console.WriteLine("{0}", element.Protocol);
                                     foreach (KeyValuePair<string, string> pair in element.Header)
                                     {
-                                        Debug.WriteLine("{0}\t:{1}", pair.Key, pair.Value);
+                                        Console.WriteLine("{0}\t:{1}", pair.Key, pair.Value);
                                     }
-                                    Debug.WriteLine("{0}", element.Content);
+                                    Console.WriteLine("{0}", element.Content);
                                 }
                             }
                         }
