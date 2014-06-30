@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="File Monitor\FileIOHooker.cs" />
+    <Compile Include="Http Parser\HttpPacket.cs" />
     <Compile Include="Http Parser\HttpPacketCapture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using SharpPcap;
 using PacketDotNet;
 
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+
 namespace Client.Http_Parser
 {
     public delegate void HttpPacketHandler(object sender, EventArgs e);
@@ -13,6 +17,11 @@ namespace Client.Http_Parser
     class HttpPacketCapture
     {
         private CaptureDeviceList devices;
+        private const int HTTP_PORT = 80;    // HTTP packet port
+        private const int HTTPS_PORT = 443;  // HTTPS packet port
+
+        private static Queue<HttpPacket> readyAssembleHttpPacket;
+        private static Queue<uint> seqNumbers;
 
         /// <summary>
         /// Basic constructor of this class
@@ -20,6 +29,8 @@ namespace Client.Http_Parser
         public HttpPacketCapture()
         {
             devices = CaptureDeviceList.Instance;
+            readyAssembleHttpPacket = new Queue<HttpPacket>();
+            seqNumbers = new Queue<uint>();
         }
 
         /// <summary>
@@ -75,21 +86,75 @@ namespace Client.Http_Parser
             RawCapture rawCapture = e.Packet;
             Packet packet = Packet.ParsePacket(rawCapture.LinkLayerType, rawCapture.Data);
 
-            TcpPacket tcpPacket = TcpPacket.GetEncapsulated(packet);
+            TcpPacket tcpPacket = (TcpPacket)packet.Extract(typeof(TcpPacket));
 
             if (tcpPacket != null)
             {
                 /// Filtering HTTP Packet using source port and desination port
-                if (tcpPacket.SourcePort == 80 || tcpPacket.DestinationPort == 80)
+                if (IsHttpPacket(tcpPacket))
                 {
-                    string httpPacketBody = Encoding.UTF8.GetString(packet.PayloadPacket.PayloadPacket.PayloadData);
-                    int contentTypeIndex = httpPacketBody.IndexOf("Content-Type: text/html;");
-                    if (contentTypeIndex != -1)
+                    if (tcpPacket.Psh && tcpPacket.Ack)
                     {
-                        Console.WriteLine("{0}", httpPacketBody);
+                        seqNumbers.Enqueue(tcpPacket.AcknowledgmentNumber);
+                    }
+
+                    // If arrived packet is the first packet of the Http packet
+                    if (IsFirstPacket(tcpPacket))
+                    {
+                        if (packet.PayloadPacket.PayloadPacket.PayloadData.Length != 0)
+                        {
+                            try
+                            {
+                                readyAssembleHttpPacket.Enqueue(new HttpPacket(packet));
+                            }
+                            catch (ArgumentException exep)
+                            {
+                                Debug.WriteLine(exep.Message);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (HttpPacket element in readyAssembleHttpPacket)
+                        {
+                            if (element.NextSequenceNumber == tcpPacket.SequenceNumber)
+                            {
+                                // Check assembling work is done
+                                if(element.AssembleTcpPacket(packet))
+                                {
+                                    Debug.WriteLine("{0}", element.Protocol);
+                                    foreach (KeyValuePair<string, string> pair in element.Header)
+                                    {
+                                        Debug.WriteLine("{0}\t:{1}", pair.Key, pair.Value);
+                                    }
+                                    Debug.WriteLine("{0}", element.Content);
+                                }
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        private static Boolean IsFirstPacket(TcpPacket packet)
+        {
+            foreach (uint element in seqNumbers)
+            {
+                if (packet.SequenceNumber - element == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static Boolean IsHttpPacket(TcpPacket packet)
+        {
+            return packet.SourcePort == HTTP_PORT || 
+                   packet.SourcePort == HTTPS_PORT ||
+                   packet.DestinationPort == HTTP_PORT || 
+                   packet.DestinationPort == HTTPS_PORT;
         }
 
         private static string ByteArrayToString(byte[] array)
