@@ -7,80 +7,65 @@ using System.IO;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Web.Script.Serialization;
+
 using Server.Utility;
 using Server.Domain;
+using Server.Service.Network;
+using Server.Dao;
+
 using NHibernate;
 using NHibernate.Cfg;
-using System.Security.Cryptography;
-using Server.Service.Network;
+
 using log4net;
 
 namespace Server
 {
-    class Program
+    /// <summary>
+    /// 서버 프로그램의 엔트리 포인트
+    /// </summary>
+    public class Program
     {
-        private static ILog logger = LogManager.GetLogger(typeof(Program));
-        private static ISessionFactory sessionFactory;
+        private ILog logger = LogManager.GetLogger(typeof(Program));
+        private ISessionFactory sessionFactory;
+        private SearchEngineServer server;
 
-        static void Main(string[] args)
+        /// <summary>
+        /// 서버 프로그램을 시작합니다.
+        /// </summary>
+        public void Start()
         {
             InitHibernate();
-            StartNetworkingService();
+            StartNetworkService();
         }
 
-        private static void StartNetworkingService()
+        /// <summary>
+        /// 사용자가 접속하고 사용할 수 있는 네트워크 서비스를 시작합니다.
+        /// </summary>
+        private void StartNetworkService()
         {
-            logger.Debug("Start networking service.");
-            ProtocolInterpretor serverPI = new ProtocolInterpretor();
-            serverPI.Session = sessionFactory.OpenSession();
-            serverPI.RunServer();
+            logger.Debug("네트워크 서비스 시작");
+
+            server = new SearchEngineServer();
+            server.Session = sessionFactory.OpenSession();
+            server.Init();
+            server.Start();
         }
 
-        private static void InitHibernate()
+        /// <summary>
+        /// ORM(Object Relation Mapping) 프레임워크인 하이버네이트를 초기화 합니다.
+        /// </summary>
+        private void InitHibernate()
         {
-            logger.Debug("Create hibernate session factory.");
+            logger.Info("하이버네이트 초기화");
+
             sessionFactory = new Configuration().Configure().BuildSessionFactory();
-            
-            // ISessionFactory sf = new Configuration().Configure().BuildSessionFactory();
-            
-            // using (ISession ss = sf.OpenSession())
-            // using (ITransaction tx = ss.BeginTransaction())
-            {
-                /*
-                var user = new Dictionary<String, Object>();
-                user["userId"] = "seok0721";
-                user["userName"] = "이왕석";
-                user["password"] = MD5.Create("0000");
-                user["email"] = "seok0721@gmail.com";
-                */
-                /*
-                User user = ss.Get<User>("seok0721");
-                MD5 hash = MD5.Create();
-                byte[] ba = hash.ComputeHash(Encoding.UTF8.GetBytes("0000"));
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < ba.Length; i++)
-                {
-                    sb.Append(ba[i].ToString("x2").ToUpper());
-                }
-                user.Password = sb.ToString();
-                ss.Delete(user);
-                Object obj = ss.Save(user);
-                Console.Out.WriteLine(obj);
-                */
-                /*
-                FileStatistic fs = new FileStatistic();
-                fs.FileId = 1;
-                fs.Sequence = 1;
-                fs.FirstIODateTime = DateTime.Now;
-                fs.LastIODateTime = DateTime.Now;
-                fs.IOCount = 0;
-                ss.Delete(fs);
-                
-                //ss.Save("User", user);
+        }
 
-                tx.Commit();
-                */
-            }
+        public static void Main(string[] args)
+        {
+            new Program().Start();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Server.Domain
+namespace Client.Domain
 {
     public class FileModel
     {

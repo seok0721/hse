@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Server" namespace="Server.Domain">
   <class name="User" table="TBL_USER" >
-    <id       name="UserId"   column="USR_ID"  type="string" />
-    <property name="UserName" column="USR_NM"  type="string" />
+    <id       name="ID"       column="USR_ID"  type="string" />
+    <property name="Name"     column="USR_NM"  type="string" />
     <property name="Password" column="USR_PWD" type="string" />
     <property name="Email"    column="EMAIL"   type="string" />
   </class>

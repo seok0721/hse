@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Server" namespace="Server.Domain">
-  <class name="FileModel" table="TBL_FILE" >
-    <id       name="FileId"   column="FILE_ID" type="int"    />
-    <property name="UserId"   column="USR_ID"  type="string" />
-    <property name="FileName" column="FILE_NM" type="string" />
-    <property name="FilePath" column="PATH"    type="string" />
-  </class>
-</hibernate-mapping>

@@ -47,9 +47,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="adodb, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Third Party\Apache\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\Third Party\NHibernate\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="PacketDotNet">
       <HintPath>..\Third Party\SharpPcap-4.2.0\Release\PacketDotNet.dll</HintPath>
@@ -64,16 +70,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="File Monitor\FileIOHooker.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Dao\DataAccessObject.cs" />
+    <Compile Include="Dao\DocumentDao.cs" />
+    <Compile Include="Dao\FileDao.cs" />
+    <Compile Include="Dao\FileIOLogDao.cs" />
+    <Compile Include="Dao\WordDao.cs" />
+    <Compile Include="Domain\Document.cs" />
+    <Compile Include="Domain\FileIOLog.cs" />
+    <Compile Include="Domain\FileModel.cs" />
+    <Compile Include="Domain\Word.cs" />
     <Compile Include="Http Parser\HttpPacket.cs" />
     <Compile Include="Http Parser\HttpPacketCapture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service.Network\NetRequest.cs" />
-    <Compile Include="Service.Network\NetResponse.cs" />
+    <Compile Include="Service.Network\DataTransferProcess.cs" />
     <Compile Include="Service.Network\ProtocolInterpretor.cs" />
+    <Compile Include="Service.Network\SearchEngineRequest.cs" />
+    <Compile Include="Service.Network\SearchEngineResponse.cs" />
+    <Compile Include="Service.Network\StoreResponseCode.cs" />
+    <Compile Include="Service\DBInitializeService.cs" />
+    <Compile Include="Utility\FileUtils.cs" />
     <Compile Include="Utility\HashUtils.cs" />
     <Compile Include="Utility\Properties.cs" />
+    <Compile Include="View\UserConsoleInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -99,7 +119,21 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <Content Include="Domain.Mapping\Document.hbm.xml" />
+    <Content Include="Domain.Mapping\FileIOLog.hbm.xml" />
+    <Content Include="Domain.Mapping\FileModel.hbm.xml" />
+    <Content Include="Domain.Mapping\Word.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="ADOX">
+      <Guid>{00000600-0000-0010-8000-00AA006D2EA4}</Guid>
+      <VersionMajor>6</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Server" namespace="Server.Domain">
+  <class name="Word" table="TBL_WORD" >
+    <id       name="ID"         column="WORD_ID"  type="int"    />
+    <property name="DocumentId" column="DOC_ID"   type="int"    />
+    <property name="Value"      column="WORD"     type="string" />
+    <property name="Count"      column="WORD_CNT" type="int"    />
+  </class>
+</hibernate-mapping>

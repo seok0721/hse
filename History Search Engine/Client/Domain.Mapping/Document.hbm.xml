@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Server" namespace="Server.Domain">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Client" namespace="Client.Domain">
   <class name="Document" table="TBL_DOCUMENT" >
     <id       name="ID"         column="DOC_ID"      type="int"      />
     <property name="URL"        column="DOC_URL"     type="String"   />

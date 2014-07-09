@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Server" namespace="Server.Domain">
+  <class name="FileIOLog" table="TBL_FILE_IO_LOG" >
+    <composite-id>
+      <key-property name="ID"       column="FILE_ID"    type="int" />
+      <key-property name="Sequence" column="IO_LOG_SEQ" type="int" />
+    </composite-id>
+    <property name="IOType" column="IO_TYPE" type="String"   />
+    <property name="IOTime" column="IO_TIME" type="DateTime" />
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Client" namespace="Client.Domain">
+  <class name="FileModel" table="TBL_FILE" >
+    <id       name="ID"             column="FILE_ID"          type="int"      />
+    <property name="UniqueId"       column="UNIQUE_ID"        type="String"   />
+    <property name="UserId"         column="USR_ID"           type="String"   />
+    <property name="Name"           column="FILE_NM"          type="String"   />
+    <property name="Size"           column="FILE_SIZE"        type="long"     />
+    <property name="Path"           column="FILE_PATH"        type="String"   />
+    <property name="LastUpdateTime" column="LAST_UPDATE_TIME" type="DateTime" />
+    <property name="RemoveYn"       column="REMOVE_YN"        type="char"     />
+  </class>
+</hibernate-mapping>

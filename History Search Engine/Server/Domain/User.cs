@@ -8,8 +8,8 @@ namespace Server.Domain
 {
     public class User
     {
-        public virtual String UserId { get; set; }
-        public virtual String UserName { get; set; }
+        public virtual String ID { get; set; }
+        public virtual String Name { get; set; }
         public virtual String Password { get; set; }
         public virtual String Email { get; set; }
     }

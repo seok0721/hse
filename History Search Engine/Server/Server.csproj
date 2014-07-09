@@ -69,18 +69,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Dao\DataAccessObject.cs" />
+    <Compile Include="Dao\DocumentDao.cs" />
+    <Compile Include="Dao\FileDao.cs" />
+    <Compile Include="Dao\FileIOLogDao.cs" />
+    <Compile Include="Dao\FileIOStatDao.cs" />
+    <Compile Include="Dao\RelationDao.cs" />
+    <Compile Include="Dao\UserDao.cs" />
+    <Compile Include="Dao\WordDao.cs" />
     <Compile Include="Domain\Document.cs" />
+    <Compile Include="Domain\FileIOLog.cs" />
+    <Compile Include="Domain\FileIOStat.cs" />
     <Compile Include="Domain\FileModel.cs" />
-    <Compile Include="Domain\FileLog.cs" />
-    <Compile Include="Domain\FileStatistic.cs" />
-    <Compile Include="Domain\Keyword.cs" />
     <Compile Include="Domain\Relation.cs" />
     <Compile Include="Domain\User.cs" />
-    <Compile Include="Service.Network\ProtocolInterpretor.cs" />
-    <Compile Include="Service.Network\NetRequest.cs" />
+    <Compile Include="Domain\Word.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service.Network\NetResponse.cs" />
+    <Compile Include="Service.Network\DataTransferProcess.cs" />
+    <Compile Include="Service.Network\ProtocolInterpretor.cs" />
+    <Compile Include="Service.Network\SearchEngineRequest.cs" />
+    <Compile Include="Service.Network\SearchEngineResponse.cs" />
+    <Compile Include="Service.Network\SearchEngineServer.cs" />
     <Compile Include="Utility\HashUtils.cs" />
     <Compile Include="Utility\Properties.cs" />
   </ItemGroup>
@@ -111,27 +122,13 @@
     <Folder Include="Service\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Domain.Mapping\FileStatistic.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\FileLog.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\File.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\Keyword.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\Relation.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\Document.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\User.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Domain.Mapping\Document.hbm.xml" />
+    <Content Include="Domain.Mapping\FileIOLog.hbm.xml" />
+    <Content Include="Domain.Mapping\FileIOStat.hbm.xml" />
+    <Content Include="Domain.Mapping\FileModel.hbm.xml" />
+    <Content Include="Domain.Mapping\Relation.hbm.xml" />
+    <Content Include="Domain.Mapping\User.hbm.xml" />
+    <Content Include="Domain.Mapping\Word.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
