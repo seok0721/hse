@@ -18,7 +18,21 @@ namespace Client
         public static void Main(string[] args)
         {
             packetCapture.Start(1000);
+
+            packetCapture.OnHttpPacketArrival += HttpPacketArriveEvent;
             //StartNetworkingService();
+        }
+
+        static void HttpPacketArriveEvent(object sender, HttpPacketArriveEvnetArgs e)
+        {
+            HttpPacket packet = e.Packet;
+
+            Console.WriteLine("{0}", packet.Protocol);
+            foreach (KeyValuePair<string, string> pair in packet.Header)
+            {
+                Console.WriteLine("{0}\t:{1}", pair.Key, pair.Value);
+            }
+            Console.WriteLine("{0}", packet.Content);
         }
 
         private static void StartNetworkingService()

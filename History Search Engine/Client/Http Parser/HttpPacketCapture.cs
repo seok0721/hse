@@ -12,7 +12,7 @@ using System.IO.Compression;
 
 namespace Client.Http_Parser
 {
-    public delegate void HttpPacketHandler(object sender, EventArgs e);
+    public delegate void HttpPacketArriveEventHandler(object sender, HttpPacketArriveEvnetArgs e);
 
     class HttpPacketCapture
     {
@@ -22,6 +22,8 @@ namespace Client.Http_Parser
 
         private static List<HttpPacket> readyAssembleHttpPacket;
         private static Queue<uint> seqNumbers;
+
+        public event HttpPacketArriveEventHandler OnHttpPacketArrival;
 
         /// <summary>
         /// Basic constructor of this class
@@ -78,7 +80,7 @@ namespace Client.Http_Parser
             }
         }
 
-        private static void OnPacketArrival(object sender, CaptureEventArgs e)
+        private void OnPacketArrival(object sender, CaptureEventArgs e)
         {
             DateTime time = e.Packet.Timeval.Date;
             int len = e.Packet.Data.Length;
@@ -122,17 +124,22 @@ namespace Client.Http_Parser
                                 // Check assembling work is done
                                 if(element.AssembleTcpPacket(packet))
                                 {
-                                    Console.WriteLine("{0}", element.Protocol);
-                                    foreach (KeyValuePair<string, string> pair in element.Header)
-                                    {
-                                        Console.WriteLine("{0}\t:{1}", pair.Key, pair.Value);
-                                    }
-                                    Console.WriteLine("{0}", element.Content);
+                                    HttpPacketArriveEvnetArgs packetEvent = new HttpPacketArriveEvnetArgs(element);
+                                    OnHttpPacketArrived(packetEvent);
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+
+        protected virtual void OnHttpPacketArrived(HttpPacketArriveEvnetArgs e)
+        {
+            HttpPacketArriveEventHandler handler = OnHttpPacketArrival;
+            if (handler != null)
+            {
+                handler(this, e);
             }
         }
 
@@ -161,6 +168,30 @@ namespace Client.Http_Parser
         {
             string hex = BitConverter.ToString(array);
             return hex.Replace("-", "");
+        }
+    }
+
+    public class HttpPacketArriveEvnetArgs : EventArgs
+    {
+        private HttpPacket packet;
+        /// <summary>
+        /// Cunstructor
+        /// </summary>
+        /// <param name="packet"></param>
+        public HttpPacketArriveEvnetArgs(HttpPacket packet)
+        {
+            this.packet = packet;
+        }
+
+        /// <summary>
+        /// Http packet was captured
+        /// </summary>
+        public HttpPacket Packet
+        {
+            get
+            {
+                return packet;
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ using System.IO.Compression;
 
 namespace Client.Http_Parser
 {
-    class HttpPacket
+    public class HttpPacket
     {
         // Variables for reassembling TCP Packet
         private Queue<TcpPacket> arrivedTcpPackets;
