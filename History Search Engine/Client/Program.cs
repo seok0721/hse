@@ -15,8 +15,12 @@ namespace Client
         private static ILog logger = LogManager.GetLogger(typeof(Program));
         private static HttpPacketCapture packetCapture = new HttpPacketCapture();
 
+        private static HttpBodyParser parser = new HttpBodyParser();
+
         public static void Main(string[] args)
         {
+            parser.StartNode = "//body";
+
             packetCapture.Start(1000);
 
             packetCapture.OnHttpPacketArrival += HttpPacketArriveEvent;
@@ -27,12 +31,21 @@ namespace Client
         {
             HttpPacket packet = e.Packet;
 
-            Console.WriteLine("{0}", packet.Protocol);
             foreach (KeyValuePair<string, string> pair in packet.Header)
             {
-                Console.WriteLine("{0}\t:{1}", pair.Key, pair.Value);
+                if (pair.Key == "Content-Type" && pair.Value == "text/html")
+                {
+                    List<string> texts = parser.parse(packet.Content);
+
+                    if (texts != null)
+                    {
+                        for (int i = 0; i < texts.Count; i++)
+                        {
+                            Console.WriteLine(texts[i]);
+                        }
+                    }
+                }
             }
-            Console.WriteLine("{0}", packet.Content);
         }
 
         private static void StartNetworkingService()

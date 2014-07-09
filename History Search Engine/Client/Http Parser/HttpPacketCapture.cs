@@ -111,7 +111,7 @@ namespace Client.Http_Parser
                             }
                             catch (ArgumentException exep)
                             {
-                                Debug.WriteLine(exep.Message);
+                                // Debug.WriteLine(exep.Message);
                             }
                         }
                     }
