@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 
-namespace Client.Http_Parser
+namespace Client.Service.Http
 {
     public class HttpBodyParser
     {

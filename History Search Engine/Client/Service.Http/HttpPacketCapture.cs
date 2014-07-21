@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 
-namespace Client.Http_Parser
+namespace Client.Service.Http
 {
     public delegate void HttpPacketArriveEventHandler(object sender, HttpPacketArriveEvnetArgs e);
 

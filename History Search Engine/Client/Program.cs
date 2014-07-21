@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Client.Service.Network;
 using log4net;
 using Client.Utility;
-using Client.Http_Parser;
+using Client.Service.Http;
 using Client.Service.File;
 using System.IO;
 

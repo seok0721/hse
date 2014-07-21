@@ -8,7 +8,7 @@ using PacketDotNet;
 using System.IO;
 using System.IO.Compression;
 
-namespace Client.Http_Parser
+namespace Client.Service.Http
 {
     public class HttpPacket
     {
