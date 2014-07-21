@@ -54,6 +54,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Third Party\Apache\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="NHanNanum, Version=1.0.5310.150, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Third Party\NHanNanum\NHanNanum.dll</HintPath>
+    </Reference>
     <Reference Include="PacketDotNet">
       <HintPath>..\Third Party\SharpPcap-4.2.0\Release\PacketDotNet.dll</HintPath>
     </Reference>
@@ -67,9 +71,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http Parser\HttpBodyParser.cs" />
-    <Compile Include="Http Parser\HttpPacket.cs" />
-    <Compile Include="Http Parser\HttpPacketCapture.cs" />
+    <Compile Include="Service.File\IOTracker.cs" />
+    <Compile Include="Service.Http\HttpBodyParser.cs" />
+    <Compile Include="Service.Http\HttpPacket.cs" />
+    <Compile Include="Service.Http\HttpPacketCapture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service.Network\NetRequest.cs" />
@@ -104,9 +109,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="File Monitor\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
