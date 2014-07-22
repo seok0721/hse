@@ -12,7 +12,7 @@ namespace Client.Utility
 {
     public class FileExtensionManager
     {
-        private static string DllPath { get; set; }
+        public static string DllPath { get; set; }
         private static List<IFileReader> Readers { get; set; }
 
         public static void LoadExtension()
@@ -47,7 +47,10 @@ namespace Client.Utility
                             }
                             else
                             {
-                                throw new TypeLoadException("Invalid assembly type");
+                                if (type.GetInterface(pluginType.FullName) != null)
+                                {
+                                    pluginTypes.Add(type);
+                                }
                             }
                         }
                     }

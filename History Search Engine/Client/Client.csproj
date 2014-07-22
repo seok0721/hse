@@ -162,6 +162,16 @@
       <Project>{08a17254-ec40-4032-93a7-c40dcc414e8d}</Project>
       <Name>FileExtensionContracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PDFReader\PDFReader.csproj">
+      <Project>{a576e99a-f357-4201-8a7b-9c6cce2c5064}</Project>
+      <Name>PDFReader</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Extensions\PDFReader.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
