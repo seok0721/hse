@@ -169,6 +169,8 @@ namespace Client.Service.Network
             }
         }
 
+        // private bool SendFlwdCommand(FileModel model,)
+
         private bool SendRetrCommand(FileModel fileModel)
         {
             ProtocolResponse response;
