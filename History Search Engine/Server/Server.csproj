@@ -108,13 +108,27 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Model.Mapping\FileIOLog.hbm.xml" />
-    <Content Include="Model.Mapping\FileIOStatistic.hbm.xml" />
-    <Content Include="Model.Mapping\FileModel.hbm.xml" />
-    <Content Include="Model.Mapping\FileWord.hbm.xml" />
-    <Content Include="Model.Mapping\HtmlModel.hbm.xml" />
-    <Content Include="Model.Mapping\HtmlWord.hbm.xml" />
-    <Content Include="Model.Mapping\UserModel.hbm.xml" />
+    <Content Include="Model.Mapping\FileIOLog.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Model.Mapping\FileIOStatistic.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Model.Mapping\FileModel.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Model.Mapping\FileWord.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Model.Mapping\HtmlModel.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Model.Mapping\HtmlWord.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Model.Mapping\UserModel.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Reference\Reference.csproj">

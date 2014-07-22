@@ -27,7 +27,7 @@ namespace Reference.Protocol
         /// <summary>
         /// 클라이언트가 서버에 파일 수신을 요청합니다.
         /// </summary>
-        public const String Retrieve = "RETR"; // <FileId:String>
+        public const String Retrieve = "RETR"; // <FileId:Int>
 
         /// <summary>
         /// 클라이언트에서 서버로 파일을 전송합니다.
@@ -48,6 +48,16 @@ namespace Reference.Protocol
         /// 파일 IO 발생 정보를 서버로 보냅니다.
         /// </summary>
         public const String FileOperation = "FLIO"; // <FileModel.toString()> <FileIOLog.toString()>
+
+        /// <summary>
+        /// 파일에 포함된 단어를 전송합니다.
+        /// </summary>
+        public const String FileWord = "FLWD"; // <FileModel.toString()> "WORD"
+
+        /// <summary>
+        /// 웹 문서에 포함된 단어를 전송합니다.
+        /// </summary>
+        public const String HtmlWord = "HTWD"; // <URL:String> "WORD"
 
         public String Command { get; set; }
         public String Argument { get; set; }
