@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
+using FileExtensionContracts;
 
 namespace Client.Service.File
 {
-    public class MSPowerPointReader : MSOfficeReader
+    public class MSPowerPointReader : IFileReader
     {
+        public string FilePath { get; set; }
         private PowerPoint.Application powerPointApp = null;
 
         private PowerPoint.Presentations multiPresentations = null;
@@ -20,7 +22,7 @@ namespace Client.Service.File
             this.FilePath = filePath;
         }
 
-        public override string Read()
+        public string Read()
         {
             try
             {

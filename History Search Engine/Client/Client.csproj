@@ -70,7 +70,6 @@
   <ItemGroup>
     <Compile Include="Service.File\IOTracker.cs" />
     <Compile Include="Service.File\MSExcelReader.cs" />
-    <Compile Include="Service.File\MSOfficeReader.cs" />
     <Compile Include="Service.File\MSPowerPointReader.cs" />
     <Compile Include="Service.File\MSWordReader.cs" />
     <Compile Include="Service.Http\HttpBodyParser.cs" />
