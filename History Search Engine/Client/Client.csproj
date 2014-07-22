@@ -75,7 +75,6 @@
   <ItemGroup>
     <Compile Include="Service.File\IOTracker.cs" />
     <Compile Include="Service.File\MSExcelReader.cs" />
-    <Compile Include="Service.File\MSOfficeReader.cs" />
     <Compile Include="Service.File\MSPowerPointReader.cs" />
     <Compile Include="Service.File\MSWordReader.cs" />
     <Compile Include="Service.Http\HttpBodyParser.cs" />
@@ -83,11 +82,12 @@
     <Compile Include="Service.Http\HttpPacketCapture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service.Network\NetRequest.cs" />
-    <Compile Include="Service.Network\NetResponse.cs" />
-    <Compile Include="Service.Network\ProtocolInterpretor.cs" />
+    <Compile Include="Service.Network\UserDataTransferProcess.cs" />
+    <Compile Include="Service.Network\UserProtocolInterpretor.cs" />
     <Compile Include="Utility\HashUtils.cs" />
     <Compile Include="Utility\Properties.cs" />
+    <Compile Include="Utility\UserDataTransferProcess.cs" />
+    <Compile Include="Utility\UserProtocolInterpretor.cs" />
     <Compile Include="View\LoginView.cs">
       <SubType>Form</SubType>
     </Compile>
