@@ -21,7 +21,7 @@ namespace PDFReader
                 PdfReader reader = new PdfReader(FilePath);
                 string content = string.Empty;
 
-                for (int page = 1; page < reader.NumberOfPages; page++)
+                for (int page = 1; page <= reader.NumberOfPages; page++)
                 {
                     content += ExtractTextFromPDFBytes(reader.GetPageContent(page));
                 }
