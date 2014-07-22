@@ -55,10 +55,6 @@
       <HintPath>..\Third Party\Apache\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="NHanNanum, Version=1.0.5310.150, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Third Party\NHanNanum\NHanNanum.dll</HintPath>
-    </Reference>
     <Reference Include="PacketDotNet">
       <HintPath>..\Third Party\SharpPcap-4.2.0\Release\PacketDotNet.dll</HintPath>
     </Reference>
@@ -85,6 +81,7 @@
     <Compile Include="Service.Network\NetRequest.cs" />
     <Compile Include="Service.Network\NetResponse.cs" />
     <Compile Include="Service.Network\ProtocolInterpretor.cs" />
+    <Compile Include="Utility\FileExtensionManager.cs" />
     <Compile Include="Utility\HashUtils.cs" />
     <Compile Include="Utility\Properties.cs" />
   </ItemGroup>
@@ -160,6 +157,12 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FileExtensionContracts\FileExtensionContracts.csproj">
+      <Project>{08a17254-ec40-4032-93a7-c40dcc414e8d}</Project>
+      <Name>FileExtensionContracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
