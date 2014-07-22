@@ -69,20 +69,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Document.cs" />
-    <Compile Include="Domain\FileModel.cs" />
-    <Compile Include="Domain\FileLog.cs" />
-    <Compile Include="Domain\FileStatistic.cs" />
-    <Compile Include="Domain\Keyword.cs" />
-    <Compile Include="Domain\Relation.cs" />
-    <Compile Include="Domain\User.cs" />
-    <Compile Include="Service.Network\ProtocolInterpretor.cs" />
-    <Compile Include="Service.Network\NetRequest.cs" />
+    <Compile Include="Dao\AbstractDao.cs" />
+    <Compile Include="Dao\FileDao.cs" />
+    <Compile Include="Dao\FileIOLogDao.cs" />
+    <Compile Include="Dao\FileIOStatistic.cs" />
+    <Compile Include="Dao\FileWordDao.cs" />
+    <Compile Include="Dao\HtmlDao.cs" />
+    <Compile Include="Dao\HtmlWordDao.cs" />
+    <Compile Include="Dao\UserDao.cs" />
+    <Compile Include="NHibernateLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service.Network\NetResponse.cs" />
-    <Compile Include="Utility\HashUtils.cs" />
-    <Compile Include="Utility\Properties.cs" />
+    <Compile Include="Service.Network\ServerDaemon.cs" />
+    <Compile Include="Service.Network\ServerDataTransferProcess.cs" />
+    <Compile Include="Service.Network\ServerProtocolInterpretor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -108,30 +108,19 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Service\" />
+    <Content Include="Model.Mapping\FileIOLog.hbm.xml" />
+    <Content Include="Model.Mapping\FileIOStatistic.hbm.xml" />
+    <Content Include="Model.Mapping\FileModel.hbm.xml" />
+    <Content Include="Model.Mapping\FileWord.hbm.xml" />
+    <Content Include="Model.Mapping\HtmlModel.hbm.xml" />
+    <Content Include="Model.Mapping\HtmlWord.hbm.xml" />
+    <Content Include="Model.Mapping\UserModel.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Domain.Mapping\FileStatistic.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\FileLog.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\File.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\Keyword.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\Relation.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\Document.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Domain.Mapping\User.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\Reference\Reference.csproj">
+      <Project>{af7546dd-1765-4c9a-a1bf-fde08cfd85a1}</Project>
+      <Name>Reference</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
