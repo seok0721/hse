@@ -55,22 +55,6 @@
       <HintPath>..\Third Party\Apache\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Office.Interop.Excel1">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 12.0\Visual Studio Tools for Office\PIA\Office15\Microsoft.Office.Interop.Excel.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.PowerPoint1">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 12.0\Visual Studio Tools for Office\PIA\Office15\Microsoft.Office.Interop.PowerPoint.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word1">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 12.0\Visual Studio Tools for Office\PIA\Office15\Microsoft.Office.Interop.Word.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="NHanNanum, Version=1.0.5310.150, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Third Party\NHanNanum\NHanNanum.dll</HintPath>
-    </Reference>
     <Reference Include="PacketDotNet">
       <HintPath>..\Third Party\SharpPcap-4.2.0\Release\PacketDotNet.dll</HintPath>
     </Reference>
@@ -86,7 +70,6 @@
   <ItemGroup>
     <Compile Include="Service.File\IOTracker.cs" />
     <Compile Include="Service.File\MSExcelReader.cs" />
-    <Compile Include="Service.File\MSOfficeReader.cs" />
     <Compile Include="Service.File\MSPowerPointReader.cs" />
     <Compile Include="Service.File\MSWordReader.cs" />
     <Compile Include="Service.Http\HttpBodyParser.cs" />
@@ -166,6 +149,22 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FileExtensionContracts\FileExtensionContracts.csproj">
+      <Project>{08a17254-ec40-4032-93a7-c40dcc414e8d}</Project>
+      <Name>FileExtensionContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PDFReader\PDFReader.csproj">
+      <Project>{a576e99a-f357-4201-8a7b-9c6cce2c5064}</Project>
+      <Name>PDFReader</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Extensions\PDFReader.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Reference\Reference.csproj">
