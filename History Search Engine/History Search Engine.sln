@@ -1,11 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{8ED8A46A-95E9-4EC5-80DC-5A209512A9FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{FFA59147-461C-4AE9-8CB2-603D38FB3B42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reference", "Reference\Reference.csproj", "{AF7546DD-1765-4C9A-A1BF-FDE08CFD85A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{AB677BBA-CF56-4001-9391-CEC2DCB3D59F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apache", "Apache", "{9D630DE6-7E2A-4471-B0BB-F20674F4E210}"
+	ProjectSection(SolutionItems) = preProject
+		Library\Apache\log4net.dll = Library\Apache\log4net.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NHibernate", "NHibernate", "{00D749AB-0D49-4BDB-A4DC-F72C5C7746CB}"
+	ProjectSection(SolutionItems) = preProject
+		Library\NHibernate\Iesi.Collections.dll = Library\NHibernate\Iesi.Collections.dll
+		Library\NHibernate\NHibernate.dll = Library\NHibernate\NHibernate.dll
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileExtensionContracts", "FileExtensionContracts\FileExtensionContracts.csproj", "{08A17254-EC40-4032-93A7-C40DCC414E8D}"
 EndProject
@@ -33,8 +48,16 @@ Global
 		{A576E99A-F357-4201-8A7B-9C6CCE2C5064}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A576E99A-F357-4201-8A7B-9C6CCE2C5064}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A576E99A-F357-4201-8A7B-9C6CCE2C5064}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF7546DD-1765-4C9A-A1BF-FDE08CFD85A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF7546DD-1765-4C9A-A1BF-FDE08CFD85A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF7546DD-1765-4C9A-A1BF-FDE08CFD85A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF7546DD-1765-4C9A-A1BF-FDE08CFD85A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9D630DE6-7E2A-4471-B0BB-F20674F4E210} = {AB677BBA-CF56-4001-9391-CEC2DCB3D59F}
+		{00D749AB-0D49-4BDB-A4DC-F72C5C7746CB} = {AB677BBA-CF56-4001-9391-CEC2DCB3D59F}
 	EndGlobalSection
 EndGlobal

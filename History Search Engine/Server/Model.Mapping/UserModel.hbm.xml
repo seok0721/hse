@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Reference" namespace="Reference.Model">
+  <class name="UserModel" table="TBL_USER" >
+    <id       name="UserId"   column="USR_ID"  type="String" />
+    <property name="Name"     column="USR_NM"  type="String" />
+    <property name="Password" column="USR_PWD" type="String" />
+    <property name="Email"    column="EMAIL"   type="String" />
+  </class>
+</hibernate-mapping>

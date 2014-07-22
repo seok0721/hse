@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Reference" namespace="Reference.Model">
+  <class name="FileWord" table="TBL_FILE_WORD" >
+    <composite-id>
+      <key-property name="UserId"     column="USR_ID"     type="String" />
+      <key-property name="FileId"     column="FILE_ID"    type="int"    />
+      <key-property name="FileWordId" column="FILE_WD_ID" type="int"    />
+    </composite-id>
+    <property name="Word"      column="FILE_WD"     type="String" />
+    <property name="WordCount" column="FILE_WD_CNT" type="int"    />
+  </class>
+</hibernate-mapping>
