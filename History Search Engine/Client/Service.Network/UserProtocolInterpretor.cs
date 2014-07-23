@@ -569,22 +569,22 @@ namespace Client.Service.Network
 
         private String GetIP()
         {
-            // WebClient client = new WebClient();
-            // FIXME 공인 아이피 아니면 안됨...
-            // return client.DownloadString("http://icanhazip.com").Replace("\r", "").Replace("\n", "");
-            // return "127.0.0.1";
+             WebClient client = new WebClient();
+             //FIXME 공인 아이피 아니면 안됨...
+             return client.DownloadString("http://icanhazip.com").Replace("\r", "").Replace("\n", "");
+             //return "127.0.0.1";
 
-            IEnumerator<IPAddress> e = Dns.GetHostEntry(Dns.GetHostName()).AddressList.Reverse().GetEnumerator();
+            //IEnumerator<IPAddress> e = Dns.GetHostEntry(Dns.GetHostName()).AddressList.Reverse().GetEnumerator();
 
-            while (e.MoveNext())
-            {
-                if (e.Current.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    return e.Current.ToString();
-                }
-            }
+            //while (e.MoveNext())
+            //{
+            //    if (e.Current.AddressFamily == AddressFamily.InterNetwork)
+            //    {
+            //        return e.Current.ToString();
+            //    }
+            //}
 
-            throw new Exception("인터넷 장치를 찾을 수 없습니다.");
+            //throw new Exception("인터넷 장치를 찾을 수 없습니다.");
         }
 
         private void SendRequest(String command, String argument)
