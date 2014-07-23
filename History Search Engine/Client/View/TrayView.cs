@@ -16,12 +16,12 @@ namespace Client.View
 {
     public partial class TrayView : Form
     {
-        private ProtocolInterpretor mClient;
+        private UserProtocolInterpretor mClient;
         private static HttpPacketCapture packetCapture = new HttpPacketCapture();
 
         private static HttpBodyParser parser = new HttpBodyParser();
 
-        public TrayView(ProtocolInterpretor client)
+        public TrayView(UserProtocolInterpretor client)
         {
             mClient = client;
             init();
@@ -102,6 +102,7 @@ namespace Client.View
         private void OnChanged(object source, FileSystemEventArgs e)
         {
             ShowMessage("파일이 변경 되었습니다.", e.Name);
+            mClient.StoreFile(new FileInfo(e.FullPath));
             
         }
 

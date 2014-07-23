@@ -84,10 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service.Network\UserDataTransferProcess.cs" />
     <Compile Include="Service.Network\UserProtocolInterpretor.cs" />
-    <Compile Include="Utility\HashUtils.cs" />
-    <Compile Include="Utility\Properties.cs" />
-    <Compile Include="Utility\UserDataTransferProcess.cs" />
-    <Compile Include="Utility\UserProtocolInterpretor.cs" />
+    <Compile Include="Utility\FileExtensionManager.cs" />
     <Compile Include="View\LoginView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,6 +178,16 @@
     <EmbeddedResource Include="View\TrayView.resx">
       <DependentUpon>TrayView.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FileExtensionContracts\FileExtensionContracts.csproj">
+      <Project>{08a17254-ec40-4032-93a7-c40dcc414e8d}</Project>
+      <Name>FileExtensionContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reference\Reference.csproj">
+      <Project>{af7546dd-1765-4c9a-a1bf-fde08cfd85a1}</Project>
+      <Name>Reference</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

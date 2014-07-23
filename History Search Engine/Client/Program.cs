@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Client.Service.Network;
 using log4net;
-using Client.Utility;
+using Reference.Utility;
 using Client.Service.Http;
 using Client.Service.File;
 using Client.View;
@@ -18,12 +18,12 @@ namespace Client
     {
         private static ILog logger = LogManager.GetLogger(typeof(Program));
  
-        private static ProtocolInterpretor clientPI;
+        private static UserProtocolInterpretor clientPI;
 
         [STAThread]
         public static void Main(string[] args)
         {
-            clientPI = new ProtocolInterpretor();
+            clientPI = new UserProtocolInterpretor();
             
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
