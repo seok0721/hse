@@ -3,101 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
+using System.Net.Sockets;
 using Client.Service.Network;
-using log4net;
-using Client.Utility;
-using Client.Service.Http;
-using Client.Service.File;
 using System.IO;
 
 namespace Client
 {
     public class Program
     {
-        private static ILog logger = LogManager.GetLogger(typeof(Program));
-        private static HttpPacketCapture packetCapture = new HttpPacketCapture();
-
-        private static HttpBodyParser parser = new HttpBodyParser();
-
         public static void Main(string[] args)
         {
-            parser.StartNode = "//body";
-            packetCapture.Start(1000);
-            packetCapture.OnHttpPacketArrival += HttpPacketArriveEvent;
+            Console.Out.WriteLine(Reference.Utility.HashUtils.HashMD5("0000"));
+            /*
+            UserProtocolInterpretor userPI = new UserProtocolInterpretor();
+            userPI.Init();
 
-            OnChangedHandler onChangeHandler = new OnChangedHandler(Program.OnChanged);
-            OnRenamedHandler onRenamedHandler = new OnRenamedHandler(Program.OnRenamed);
-
-            IOTracker track = new IOTracker("C:\\", onChangeHandler, onRenamedHandler);
-
-            track.AddFileType("txt");
-            track.AddFileType("ppt");
-            try
+            if (!userPI.Connect())
             {
-                track.StartWatch();
-            }
-            catch (Exception e)
-            {
-                Console.Out.WriteLine(e.ToString());
+                Environment.Exit(1);
             }
 
-            //StartNetworkingService();
-        }
+            userPI.Login("admin", "0000");
+            userPI.StoreFile(new FileInfo("c:\\Users\\이왕석\\test.txt"));
+            userPI.Logout();
 
-        /// <summary>
-        /// Event handler for handling HTTP packet capture event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void HttpPacketArriveEvent(object sender, HttpPacketArriveEvnetArgs e)
-        {
-            HttpPacket packet = e.Packet;
-
-            foreach (KeyValuePair<string, string> pair in packet.Header)
+            userPI.Init();
+            if (!userPI.Connect())
             {
-                // Use the packet which contain HTML code.
-                if (pair.Key == "Content-Type" && pair.Value == "text/html")
-                {
-                    // Parsing the content of packet.
-                    List<string> texts = parser.parse(packet.Content);
-
-                    if (texts != null)
-                    {
-                        for (int i = 0; i < texts.Count; i++)
-                        {
-                            //Console.WriteLine(texts[i]);
-                        }
-                    }
-                }
+                Environment.Exit(1);
             }
-        }
 
-        private static void OnChanged(object source, FileSystemEventArgs e)
-        {
-            //Console.Out.WriteLine("File Changed : " + e.Name);
-        }
+            userPI.Login("admin", "0000");
 
-        private static void OnRenamed(object source, RenamedEventArgs e)
-        {
-            //Console.Out.WriteLine("File Name Changed : " + e.OldName + "to " + e.Name);
-        }
+            FileInfo loadFileInfo = new FileInfo("c:\\Users\\이왕석\\test2.txt");
 
-        private static void StartNetworkingService()
-        {
-            ProtocolInterpretor clientPI;
-
-            try
+            if (loadFileInfo.Exists)
             {
-                clientPI = new ProtocolInterpretor();
-                clientPI.RunClient();
-                bool isLogin = clientPI.Login("seok0721", HashUtils.HashMD5("0000"));
+                loadFileInfo.Delete();
+            }
 
-                logger.Info("Is login? : " + isLogin);
-            }
-            catch (Exception e)
-            {
-                logger.Error(e.Message);
-            }
+            userPI.RetriveFile(1, "c:\\Users\\이왕석", "test2.txt");
+            userPI.Logout();
+            */
         }
     }
 }
