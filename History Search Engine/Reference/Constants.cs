@@ -8,7 +8,7 @@ namespace Reference
 {
     public class Constants
     {
-        public const int BlockSize = 8;//4096;
+        public const int BlockSize = 4096;
 
         public const int BufferSize = 4096;
 

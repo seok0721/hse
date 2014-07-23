@@ -41,6 +41,16 @@ namespace Server.Dao
                .SingleOrDefault<FileWord>();
         }
 
+        public FileWord ReadFileWordUsingWord(FileWord model)
+        {
+            return Session.QueryOver<FileWord>()
+               .Where(m
+                   => (m.UserId == model.UserId)
+                   && (m.FileId == model.FileId)
+                   && (m.Word == model.Word))
+               .SingleOrDefault<FileWord>();
+        }
+
         public IList<FileWord> ReadFileWordList(FileModel model)
         {
             ISQLQuery query = Session.CreateSQLQuery(

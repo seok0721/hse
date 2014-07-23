@@ -25,7 +25,10 @@ namespace Server.Service.Network
         private String password;
         private String baseDirectory;
         private FileDao fileDao = new FileDao();
+        private FileWordDao fileWordDao = new FileWordDao();
         private FileIOLogDao fileIOLogDao = new FileIOLogDao();
+        private HtmlDao htmlDao = new HtmlDao();
+        private HtmlWordDao htmlWordDao = new HtmlWordDao();
         private UserDao userDao = new UserDao();
 
         public Socket Socket { get; set; }
@@ -44,7 +47,10 @@ namespace Server.Service.Network
             reader = new StreamReader(new NetworkStream(Socket));
 
             fileDao.Session = NHibernateLoader.Instance.Session;
+            fileWordDao.Session = NHibernateLoader.Instance.Session;
             fileIOLogDao.Session = NHibernateLoader.Instance.Session;
+            htmlDao.Session = NHibernateLoader.Instance.Session;
+            htmlWordDao.Session = NHibernateLoader.Instance.Session;
             userDao.Session = NHibernateLoader.Instance.Session;
         }
 
@@ -100,11 +106,97 @@ namespace Server.Service.Network
                     case ProtocolRequest.Retrieve:
                         HandleRetrCommand(request.Argument);
                         break;
+                    case ProtocolRequest.FileWord:
+                        HandleFlwdCommand(request.Argument);
+                        break;
+                    case ProtocolRequest.HtmlWord:
+                        HandleHtwdCommand(request.Argument);
+                        break;
                     default:
                         SendResponse(ProtocolResponse.UnknownCommandError, "알 수 없는 명령어입니다.");
                         break;
                 }
             }
+        }
+
+        private void HandleHtwdCommand(String argument)
+        {
+            if (!isLogin)
+            {
+                SendResponse(ProtocolResponse.NotLoggedIn, "로그인 후 사용하세요.");
+                return;
+            }
+
+            String[] split = argument.Split(',');
+            HtmlModel mHtml = new HtmlModel();
+            mHtml.UserId = userId;
+            mHtml.HtmlId = htmlDao.ReadMaxHtmlId(userId) + 1;
+            mHtml.URL = split[0].Split('|')[2];
+            mHtml.CreateTime = DateTime.Now;
+            htmlDao.CreateHtml(mHtml);
+
+            HtmlWord mHtmlWord = new HtmlWord();
+            mHtmlWord.UserId = mHtml.UserId;
+            mHtmlWord.HtmlId = mHtml.HtmlId;
+            mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml);
+            mHtmlWord.WordCount = 1;
+
+            foreach (String htmlWord in split[1].Split(' '))
+            {
+                mHtmlWord.Word = htmlWord;
+                htmlWordDao.CreateHtmlWord(mHtmlWord);
+            }
+
+            SendResponse(ProtocolResponse.CommandOkay, "HTML 정보가 추가되었습니다.");
+        }
+
+        private void HandleFlwdCommand(String argument)
+        {
+            if (!isLogin)
+            {
+                SendResponse(ProtocolResponse.NotLoggedIn, "로그인 후 사용하세요.");
+                return;
+            }
+
+            String[] split = argument.Split(',');
+            FileModel mFile = FileModel.FromString(split[0]);
+
+            mFile = fileDao.ReadFileUsingUniqueId(mFile);
+
+            if (mFile == null)
+            {
+                SendResponse(ProtocolResponse.FileUnavailable, "연관된 파일이 없습니다.");
+                return;
+            }
+
+            FileWord mFileWord = new FileWord();
+            mFileWord.FileId = mFile.FileId;
+            mFileWord.UserId = mFile.UserId;
+
+            foreach(String word in split[1].Split(' '))
+            {
+                mFileWord.Word = word;
+                mFileWord = fileWordDao.ReadFileWordUsingWord(mFileWord);
+
+                if (mFileWord == null)
+                {
+                    mFileWord.FileId = mFile.FileId;
+                    mFileWord.UserId = mFile.UserId;
+                    mFileWord.FileWordId = fileWordDao.ReadMaxFileWordId(mFile) + 1;
+                    mFileWord.Word = word;
+                    mFileWord.WordCount = 1;
+
+                    fileWordDao.CreateFileWord(mFileWord);
+                }
+                else
+                {
+                    mFileWord.WordCount += 1;
+
+                    fileWordDao.UpdateFileWord(mFileWord);
+                }
+            }
+
+            SendResponse(ProtocolResponse.CommandOkay, "파일 내용 저장이 종료되었습니다.");
         }
 
         private bool ConnectUserDTP()
@@ -245,6 +337,8 @@ namespace Server.Service.Network
 
         private void HandlePassCommand(String password)
         {
+            logger.InfoFormat("로그인 시도, {0}", password);
+
             if (isLogin)
             {
                 SendResponse(ProtocolResponse.UserLoggedIn, "이미 접속 중 입니다.");

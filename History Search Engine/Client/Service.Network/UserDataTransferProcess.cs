@@ -117,7 +117,7 @@ namespace Client.Service.Network
                 return StoreCommandResponseCode.AlreadyTheNewestFile;
             }
 
-            using (FileStream fs = File.OpenRead(fi.FullName))
+            using (FileStream fs = System.IO.File.OpenRead(fi.FullName))
             {
                 do
                 {
@@ -147,7 +147,7 @@ namespace Client.Service.Network
             byte[] buffer = new byte[Constants.BufferSize];
             int length = 0;
 
-            using (FileStream fs = File.OpenRead(String.Format("{0}\\{1}", model.Path, model.Name)))
+            using (FileStream fs = System.IO.File.OpenRead(String.Format("{0}\\{1}", model.Path, model.Name)))
             {
                 while ((length = fs.Read(buffer, 0, buffer.Length)) > 0)
                 {
@@ -169,7 +169,7 @@ namespace Client.Service.Network
             logger.Info("11111111111111111111");
             logger.Debug("새 파일 수신을 시작합니다.");
 
-            using (FileStream fs = File.OpenWrite(filePath))
+            using (FileStream fs = System.IO.File.OpenWrite(filePath))
             {
                 while ((length = serverSocket.Receive(buffer, 0, buffer.Length, SocketFlags.None)) > 0)
                 {
@@ -210,7 +210,7 @@ namespace Client.Service.Network
             long remainder = 0;
             int length = 0;
 
-            using (FileStream fs = File.OpenRead(String.Format("{0}\\{1}", model.Path, model.Name)))
+            using (FileStream fs = System.IO.File.OpenRead(String.Format("{0}\\{1}", model.Path, model.Name)))
             {
                 logger.Info("총 변경 블록의 수 : " + diffFlagList.Count);
                 logger.Info(String.Join(",", diffFlagList.ToArray()));

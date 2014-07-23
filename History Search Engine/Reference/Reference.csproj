@@ -55,7 +55,12 @@
     <Compile Include="Utility\HashUtils.cs" />
     <Compile Include="Utility\Properties.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PDFReader\PDFReader.csproj">
+      <Project>{a576e99a-f357-4201-8a7b-9c6cce2c5064}</Project>
+      <Name>PDFReader</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

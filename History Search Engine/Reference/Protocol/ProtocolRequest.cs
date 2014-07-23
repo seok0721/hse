@@ -52,12 +52,12 @@ namespace Reference.Protocol
         /// <summary>
         /// 파일에 포함된 단어를 전송합니다.
         /// </summary>
-        public const String FileWord = "FLWD"; // <FileModel.toString()> "WORD"
+        public const String FileWord = "FLWD"; // <FileModel.toString()> "WORD_LIST"
 
         /// <summary>
         /// 웹 문서에 포함된 단어를 전송합니다.
         /// </summary>
-        public const String HtmlWord = "HTWD"; // <URL:String> "WORD"
+        public const String HtmlWord = "HTWD"; // <URL:String> "WORD_LIST"
 
         public String Command { get; set; }
         public String Argument { get; set; }

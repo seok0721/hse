@@ -21,5 +21,10 @@ namespace Reference.Model
         {
             return String.Format("%s|%d", UserId, HtmlId).GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return String.Format("{0}|{1}|{2}|{3}", UserId, HtmlId, URL, CreateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+        }
     }
 }
