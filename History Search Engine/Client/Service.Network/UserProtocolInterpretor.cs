@@ -112,7 +112,7 @@ namespace Client.Service.Network
             }
         }
 
-        public bool StoreFile(FileInfo fileInfo, FileInfo copyFileInfo)
+        public bool StoreFile(FileInfo fileInfo)
         {
             try
             {
@@ -131,12 +131,6 @@ namespace Client.Service.Network
             {
                 FileModel model = FileModel.FromFileInfo(fileInfo);
 
-                if(copyFileInfo != null)
-                {
-                    model.RealPath = copyFileInfo.DirectoryName;
-                    model.RealName = copyFileInfo.Name;
-                }
-
                 return SendStorCommand(model);
             }
             catch (Exception ex)
@@ -144,11 +138,6 @@ namespace Client.Service.Network
                 logger.Error(ex.Message);
                 return false;
             }
-        }
-
-        public bool StoreFile(FileInfo fileInfo)
-        {
-            return StoreFile(fileInfo, null);
         }
 
         public bool StoreFileWord(FileInfo fileInfo, IList<String> wordList)
