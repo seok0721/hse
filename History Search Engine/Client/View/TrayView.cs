@@ -17,7 +17,7 @@ namespace Client.View
     public partial class TrayView : Form
     {
         private UserProtocolInterpretor mClient;
-        private static HttpPacketCapture packetCapture = new HttpPacketCapture();
+        private static HttpPacketCapture packetCapture;
 
         private static HttpBodyParser parser = new HttpBodyParser();
 
@@ -51,6 +51,8 @@ namespace Client.View
 
             parser.StartNode = "//body";
 
+            packetCapture = new HttpPacketCapture();
+
             packetCapture.Start(1000);
             packetCapture.OnHttpPacketArrival += HttpPacketArriveEvent;
 
@@ -67,7 +69,9 @@ namespace Client.View
                     {
                         mClient.StoreFileWord(
                             new FileInfo(e.FullPath.Replace("~$", "")),
-                            new MSWordReader(e.FullPath.Replace("~$", "")).Read().Split(' '));
+                            new MSWordReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                            .Replace("\r", " ").Replace("\n", " "));
+                        
                     }
                 } ,
                 (s, e) =>
@@ -92,7 +96,7 @@ namespace Client.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void HttpPacketArriveEvent(object sender, HttpPacketArriveEvnetArgs e)
+        private void HttpPacketArriveEvent(object sender, HttpPacketArriveEvnetArgs e)
         {
             HttpPacket packet = e.Packet;
 
@@ -103,12 +107,12 @@ namespace Client.View
                 {
                     // Parsing the content of packet.
                     List<string> texts = parser.parse(packet.Content);
-
+                    mClient.StoreHtml("URL", string.Join(" ",  texts));
                     if (texts != null)
                     {
                         for (int i = 0; i < texts.Count; i++)
                         {
-                            //Console.WriteLine(texts[i]);
+                            Console.WriteLine(texts[i]);
                         }
                     }
                 }
