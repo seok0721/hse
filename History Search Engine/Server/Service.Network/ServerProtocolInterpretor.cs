@@ -141,7 +141,7 @@ namespace Server.Service.Network
             mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml);
             mHtmlWord.WordCount = 1;
 
-            foreach (String htmlWord in split[1].Split(' '))
+            foreach (String htmlWord in split[1].Trim().Split(' '))
             {
                 mHtmlWord.Word = htmlWord;
                 htmlWordDao.CreateHtmlWord(mHtmlWord);
@@ -158,6 +158,7 @@ namespace Server.Service.Network
                 return;
             }
 
+            logger.Info(argument);
             logger.Info("단어 전송을 위해 파일 정보 읽기를 시작합니다.");
 
             String[] split = argument.Split(',');
@@ -166,6 +167,7 @@ namespace Server.Service.Network
             mFile.UniqueId = split[0];
 
             mFile = fileDao.ReadFileUsingUniqueId(mFile);
+            logger.Info(mFile.ToString());
 
             if (mFile == null)
             {
@@ -181,8 +183,10 @@ namespace Server.Service.Network
             mFileWord.FileId = mFile.FileId;
             mFileWord.UserId = mFile.UserId;
 
+            logger.Info(mFile.ToString());
+
             // FIXME 기존 파일의 카운트를 지우고 다시 생성할 것.
-            foreach (String word in split[1].Split(' '))
+            foreach (String word in split[1].Trim().Split(' '))
             {
                 mFileWord.Word = word;
 
@@ -193,13 +197,22 @@ namespace Server.Service.Network
 
                 if (mFileWord == null)
                 {
+                    mFileWord = new FileWord();
                     logger.Info("3333");
                     mFileWord.FileId = mFile.FileId;
+                    logger.Info("333311111111111");
                     mFileWord.UserId = mFile.UserId;
+                    logger.Info("33332222222222222");
                     mFileWord.FileWordId = fileWordDao.ReadMaxFileWordId(mFile) + 1;
+                    logger.Info("33333333333333333");
                     mFileWord.Word = word;
+                    logger.Info("3333444444444444");
                     mFileWord.WordCount = 1;
-
+                    logger.Info("33335555555555555");
+                    if (mFileWord.FileWordId == -1)
+                    {
+                        break;
+                    }
                     logger.Info("4444");
                     fileWordDao.CreateFileWord(mFileWord);
                     logger.Info("5555");
@@ -275,6 +288,8 @@ namespace Server.Service.Network
             }
 
             FileModel userFile = FileModel.FromString(argument);
+            userFile.UserId = userId;
+            
             FileModel serverFile = fileDao.ReadFileUsingUniqueId(userFile);
 
             if (serverFile != null)
@@ -506,6 +521,8 @@ namespace Server.Service.Network
 
                 request.Argument = pair[1];
             }
+
+            logger.Info(request.Command + " " + request.Argument);
 
             return request;
         }

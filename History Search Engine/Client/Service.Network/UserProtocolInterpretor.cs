@@ -204,7 +204,7 @@ namespace Client.Service.Network
         {
             ProtocolResponse response;
 
-            SendRequest(ProtocolRequest.FileWord, String.Format("{0},{1}", htmlModel.ToString(), wordList));
+            SendRequest(ProtocolRequest.HtmlWord, String.Format("{0},{1}", htmlModel.ToString(), wordList));
             response = ReceiveResponse();
 
             switch (response.Code)
