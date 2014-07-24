@@ -140,7 +140,7 @@ namespace Client.Service.Network
             }
         }
 
-        public bool StoreFileWord(FileInfo fileInfo, IList<String> wordList)
+        public bool StoreFileWord(FileInfo fileInfo, String wordList)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace Client.Service.Network
             }
         }
 
-        public bool StoreHtml(String url, IList<String> wordList)
+        public bool StoreHtml(String url, String wordList)
         {
             try
             {
@@ -200,12 +200,11 @@ namespace Client.Service.Network
             }
         }
 
-        private bool SendHtwdCommand(HtmlModel htmlModel, IList<String> wordList)
+        private bool SendHtwdCommand(HtmlModel htmlModel, String wordList)
         {
             ProtocolResponse response;
 
-            SendRequest(ProtocolRequest.FileWord, String.Format("{0},{1}",
-                htmlModel.ToString(), String.Join(" ", wordList.ToArray())));
+            SendRequest(ProtocolRequest.FileWord, String.Format("{0},{1}", htmlModel.ToString(), wordList));
             response = ReceiveResponse();
 
             switch (response.Code)
@@ -221,12 +220,11 @@ namespace Client.Service.Network
             }
         }
 
-        private bool SendFlwdCommand(FileModel fileModel, IList<String> wordList)
+        private bool SendFlwdCommand(FileModel fileModel, String wordList)
         {
             ProtocolResponse response;
 
-            SendRequest(ProtocolRequest.FileWord, String.Format("{0},{1}",
-                fileModel.UniqueId, String.Join(" ", wordList.ToArray())));
+            SendRequest(ProtocolRequest.FileWord, String.Format("{0},{1}", fileModel.UniqueId, wordList));
             response = ReceiveResponse();
 
             switch (response.Code)

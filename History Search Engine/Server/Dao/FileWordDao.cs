@@ -43,12 +43,26 @@ namespace Server.Dao
 
         public FileWord ReadFileWordUsingWord(FileWord model)
         {
+            ISQLQuery query = Session.CreateSQLQuery(
+                   " SELECT *" +
+                   "   FROM TBL_FILE_WORD" +
+                   "  WHERE USR_ID  = :userId" +
+                   "    AND FILE_ID = :fileId" +
+                   "    AND FILE_WD = :fileWord");
+            query.SetParameter("userId", model.UserId);
+            query.SetParameter("fileId", model.FileId);
+            query.SetParameter("fileWord", model.Word);
+            query.AddEntity(typeof(FileWord));
+
+            return (FileWord)query.UniqueResult();
+            /*
             return Session.QueryOver<FileWord>()
                .Where(m
                    => (m.UserId == model.UserId)
                    && (m.FileId == model.FileId)
                    && (m.Word == model.Word))
                .SingleOrDefault<FileWord>();
+            */
         }
 
         public IList<FileWord> ReadFileWordList(FileModel model)
@@ -75,6 +89,7 @@ namespace Server.Dao
                 "    AND FILE_ID = :fileId");
             query.SetParameter("userId", model.UserId);
             query.SetParameter("fileId", model.FileId);
+            query.AddEntity(typeof(int));
 
             return (int)query.UniqueResult();
         }
