@@ -133,8 +133,8 @@ namespace Client.Service.Network
 
                 if(copyFileInfo != null)
                 {
-                    model.Path = copyFileInfo.DirectoryName;
-                    model.Name = copyFileInfo.Name;
+                    model.RealPath = copyFileInfo.DirectoryName;
+                    model.RealName = copyFileInfo.Name;
                 }
 
                 return SendStorCommand(model);
@@ -237,7 +237,7 @@ namespace Client.Service.Network
             ProtocolResponse response;
 
             SendRequest(ProtocolRequest.FileWord, String.Format("{0},{1}",
-                fileModel.FileId.ToString(), String.Join(" ", wordList.ToArray())));
+                fileModel.UniqueId, String.Join(" ", wordList.ToArray())));
             response = ReceiveResponse();
 
             switch (response.Code)
