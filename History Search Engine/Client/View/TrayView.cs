@@ -63,17 +63,17 @@ namespace Client.View
                 (s, e) =>
                 {
                     ShowMessage("파일이 변경 되었습니다.", e.Name);
+                    if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                    {
+                        mClient.StoreFileWord(
+                            new FileInfo(e.FullPath.Replace("~$", "")),
+                            new MSWordReader(e.FullPath.Replace("~$", "")).Read().Split(' '));
+                    }
                 } ,
                 (s, e) =>
                 {
-                    ShowMessage("워드파일이 저장 되었습니다.", e.FullPath);
-                    bool result = mClient.StoreFile(new FileInfo(e.FullPath));
-                    if (result)
-                    {
-                        File.Copy(e.FullPath, "$temp_" + e.FullPath.Split('\\').Last());
-                        
-                        File.Delete("$temp_" + e.FullPath.Split('\\').Last());
-                    }
+                    ShowMessage("Rename", e.OldFullPath +"to "+ e.FullPath);
+              
                     
                 }
                 );
