@@ -59,8 +59,24 @@ namespace Client.View
 
             IOTracker track = new IOTracker("C:\\", onChangeHandler, onRenamedHandler);
 
-            track.AddFileType("txt");
-            track.AddFileType("ppt");
+            track.AddFileType("docx",
+                (s, e) =>
+                {
+                    ShowMessage("파일이 변경 되었습니다.", e.Name);
+                } ,
+                (s, e) =>
+                {
+                    ShowMessage("워드파일이 저장 되었습니다.", e.FullPath);
+                    bool result = mClient.StoreFile(new FileInfo(e.FullPath));
+                    if (result)
+                    {
+                        File.Copy(e.FullPath, "$temp_" + e.FullPath.Split('\\').Last());
+                        
+                        File.Delete("$temp_" + e.FullPath.Split('\\').Last());
+                    }
+                    
+                }
+                );
             try
             {
                 track.StartWatch();
