@@ -33,6 +33,8 @@ namespace Server.Dao
 
         public FileWord ReadFileWord(FileWord model)
         {
+            Session.Clear();
+
             return Session.QueryOver<FileWord>()
                .Where(m
                    => (m.UserId == model.UserId)
@@ -43,6 +45,8 @@ namespace Server.Dao
 
         public FileWord ReadFileWordUsingWord(FileWord model)
         {
+            Session.Clear();
+
             ISQLQuery query = Session.CreateSQLQuery(
                    " SELECT *" +
                    "   FROM TBL_FILE_WORD" +
@@ -67,6 +71,8 @@ namespace Server.Dao
 
         public IList<FileWord> ReadFileWordList(FileModel model)
         {
+            Session.Clear();
+
             ISQLQuery query = Session.CreateSQLQuery(
                 " SELECT *" +
                 "   FROM TBL_FILE_WORD" +
@@ -82,6 +88,8 @@ namespace Server.Dao
 
         public int ReadMaxFileWordId(FileModel model)
         {
+            Session.Clear();
+
             ISQLQuery query = Session.CreateSQLQuery(
                 " SELECT ISNULL(MAX(FILE_WD_ID), 0)" +
                 "   FROM TBL_FILE_WORD" +
@@ -89,9 +97,25 @@ namespace Server.Dao
                 "    AND FILE_ID = :fileId");
             query.SetParameter("userId", model.UserId);
             query.SetParameter("fileId", model.FileId);
-            query.AddEntity(typeof(int));
 
-            return (int)query.UniqueResult();
+            int result = -1;
+
+            try
+            {
+                result = (int)query.UniqueResult();
+                System.Console.Out.WriteLine("max: " + result);
+
+                return result;
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.Out.WriteLine(ex.Message);
+                System.Console.Out.WriteLine(ex.StackTrace);
+                return result;
+            }
+
+
+
         }
     }
 }
