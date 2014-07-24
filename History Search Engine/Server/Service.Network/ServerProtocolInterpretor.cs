@@ -278,11 +278,13 @@ namespace Server.Service.Network
                     serverDTP.ReceiveDifferenceStream(serverFile);
                     serverDTP.CloseServerDTP();
 
-                    serverFile.LastUpdateTime = userFile.LastUpdateTime;
-                    fileDao.UpdateFile(serverFile);
-
                     SendResponse(ProtocolResponse.CloseDataConnection, "파일의 최신화가 완료되었습니다.");
                 }
+
+                serverFile.Name = userFile.Name; // 2014-07-24 ADD by KS
+                serverFile.Size = userFile.Size; // 2014-07-24 ADD by KS
+                serverFile.LastUpdateTime = userFile.LastUpdateTime;
+                fileDao.UpdateFile(serverFile);
             }
             else
             {
