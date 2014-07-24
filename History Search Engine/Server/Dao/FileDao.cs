@@ -44,7 +44,9 @@ namespace Server.Dao
         public FileModel ReadFileUsingUniqueId(FileModel model)
         {
             return Session.QueryOver<FileModel>()
-               .Where(m => (m.UniqueId == model.UniqueId))
+               .Where(m
+                   => (m.UserId == model.UserId
+                   && (m.UniqueId == model.UniqueId)))
                .SingleOrDefault<FileModel>();
         }
 

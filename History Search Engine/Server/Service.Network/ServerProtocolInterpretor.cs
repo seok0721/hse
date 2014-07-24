@@ -158,43 +158,65 @@ namespace Server.Service.Network
                 return;
             }
 
+            logger.Info("단어 전송을 위해 파일 정보 읽기를 시작합니다.");
+
             String[] split = argument.Split(',');
-            FileModel mFile = FileModel.FromString(split[0]);
+            FileModel mFile = new FileModel();
+            mFile.UserId = userId;
+            mFile.UniqueId = split[0];
 
             mFile = fileDao.ReadFileUsingUniqueId(mFile);
 
             if (mFile == null)
             {
+                logger.Info("연관된 파일이 없습니다.");
+
                 SendResponse(ProtocolResponse.FileUnavailable, "연관된 파일이 없습니다.");
                 return;
             }
+
+            logger.Info("단어를 파싱합니다.");
 
             FileWord mFileWord = new FileWord();
             mFileWord.FileId = mFile.FileId;
             mFileWord.UserId = mFile.UserId;
 
-            foreach(String word in split[1].Split(' '))
+            // FIXME 기존 파일의 카운트를 지우고 다시 생성할 것.
+            foreach (String word in split[1].Split(' '))
             {
                 mFileWord.Word = word;
+
+                logger.Info(word);
+                logger.Info("1111");
                 mFileWord = fileWordDao.ReadFileWordUsingWord(mFileWord);
+                logger.Info("2222");
 
                 if (mFileWord == null)
                 {
+                    logger.Info("3333");
                     mFileWord.FileId = mFile.FileId;
                     mFileWord.UserId = mFile.UserId;
                     mFileWord.FileWordId = fileWordDao.ReadMaxFileWordId(mFile) + 1;
                     mFileWord.Word = word;
                     mFileWord.WordCount = 1;
 
+                    logger.Info("4444");
                     fileWordDao.CreateFileWord(mFileWord);
+                    logger.Info("5555");
                 }
                 else
                 {
                     mFileWord.WordCount += 1;
 
+                    logger.Info("6666");
                     fileWordDao.UpdateFileWord(mFileWord);
+                    logger.Info("7777");
                 }
+
+                logger.Info(word);
             }
+
+            logger.Info("파일 내용 저장이 종료되었습니다.");
 
             SendResponse(ProtocolResponse.CommandOkay, "파일 내용 저장이 종료되었습니다.");
         }
