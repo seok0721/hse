@@ -26,6 +26,10 @@ namespace Client.Service.Http
             List<string> textList = new List<string>();
 
             doc.LoadHtml(content);
+            doc.DocumentNode.Descendants()
+                .Where(n => n.Name == "script")
+                .ToList()
+                .ForEach(n => n.Remove());
 
             if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
             {
