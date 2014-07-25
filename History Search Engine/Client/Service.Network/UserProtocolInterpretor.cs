@@ -20,7 +20,7 @@ namespace Client.Service.Network
         private StreamReader reader;
         private StreamWriter writer;
         private Socket socket;
-        private Properties properties = new Properties();
+        private Reference.Utility.Properties properties = new Reference.Utility.Properties();
 
         public void Init()
         {
