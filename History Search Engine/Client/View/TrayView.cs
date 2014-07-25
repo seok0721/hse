@@ -107,7 +107,7 @@ namespace Client.View
                 {
                     // Parsing the content of packet.
                     List<string> texts = parser.parse(packet.Content);
-                    mClient.StoreHtml("URL", string.Join(" ",  texts));
+                   
                     if (texts != null)
                     {
                         for (int i = 0; i < texts.Count; i++)
@@ -115,6 +115,8 @@ namespace Client.View
                             Console.WriteLine(texts[i]);
                         }
                     }
+
+                    mClient.StoreHtml("URL", string.Join(" ", texts));
                 }
             }
         }

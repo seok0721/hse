@@ -14,7 +14,7 @@ namespace Client.Service.Http
 {
     public delegate void HttpPacketArriveEventHandler(object sender, HttpPacketArriveEvnetArgs e);
 
-    class HttpPacketCapture
+    public class HttpPacketCapture
     {
         private CaptureDeviceList devices;
         private const int HTTP_PORT = 80;    // HTTP packet port
