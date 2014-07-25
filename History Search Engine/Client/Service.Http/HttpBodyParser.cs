@@ -25,6 +25,11 @@ namespace Client.Service.Http
         {
             List<string> textList = new List<string>();
 
+            if (content == null)
+            {
+                throw new ArgumentNullException("Content can not be null");
+            }
+
             doc.LoadHtml(content);
             doc.DocumentNode.Descendants()
                 .Where(n => n.Name == "script")
