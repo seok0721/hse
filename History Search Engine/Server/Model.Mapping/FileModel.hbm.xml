@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Reference" namespace="Reference.Model">
+  <class name="FileModel" table="TBL_FILE" >
+    <composite-id>
+      <key-property name="UserId" column="USR_ID"  type="String" />
+      <key-property name="FileId" column="FILE_ID" type="int"    />
+    </composite-id>
+    <property name="UniqueId"       column="UNIQUE_ID"      type="String"   />
+    <property name="Path"           column="FILE_PATH"      type="String"   />
+    <property name="Name"           column="FILE_NM"        type="String"   />
+    <property name="Size"           column="FILE_SZ"        type="long"     />
+    <property name="LastUpdateTime" column="LAST_UPDATE_TM" type="DateTime" />
+    <property name="RemoveYN"       column="REMOVE_YN"      type="char"     />
+  </class>
+</hibernate-mapping>

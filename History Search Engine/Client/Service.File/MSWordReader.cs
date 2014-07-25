@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileExtensionContracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,16 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace Client.Service.File
 {
-    public class MSWordReader : MSOfficeReader
+    public class MSWordReader : IFileReader
     {
+        public string FilePath { get; set; }
+        
         public MSWordReader(string filePath)
         {
             this.FilePath = filePath;
         }
 
-        override public string Read()
+        public string Read()
         {
             try
             {
@@ -25,21 +28,21 @@ namespace Client.Service.File
                 object filePath = FilePath;
 
                 Word.Document docs = app.Documents.Open(ref filePath,
-                                                   ref missingValue,
-                                                   ref missingValue,
-                                                   ref readOnly, // 4 
-                                                   ref missingValue,
-                                                   ref missingValue,
-                                                   ref missingValue,
-                                                   ref missingValue, // 8
-                                                   ref missingValue,
-                                                   ref missingValue,
-                                                   ref missingValue,
-                                                   ref missingValue, // 12
-                                                   ref missingValue,
-                                                   ref missingValue,
-                                                   ref missingValue,
-                                                   ref missingValue);
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref readOnly,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue,
+                                                        ref missingValue);
                 docs.Activate();
 
                 string totalText = "";

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Reference" namespace="Reference.Model">
+  <class name="HtmlWord" table="TBL_HTML_WORD" >
+    <composite-id>
+      <key-property name="UserId"     column="USR_ID"     type="String" />
+      <key-property name="HtmlId"     column="HTML_ID"    type="int"    />
+      <key-property name="HtmlWordId" column="HTML_WD_ID" type="int"    />
+    </composite-id>
+    <property name="Word"      column="HTML_WD"     type="String" />
+    <property name="WordCount" column="HTML_WD_CNT" type="int"    />
+  </class>
+</hibernate-mapping>

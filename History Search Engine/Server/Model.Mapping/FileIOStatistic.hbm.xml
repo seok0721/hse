@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Reference" namespace="Reference.Model">
+  <class name="FileIOStatistic" table="TBL_FILE_IO_STAT" >
+    <composite-id>
+      <key-property name="UserId"                  column="USR_ID"           type="String" />
+      <key-property name="FileId"                  column="FILE_ID"          type="int"    />
+      <key-property name="FileIOStatisticSequence" column="FILE_IO_STAT_SEQ" type="int"    />
+    </composite-id>
+    <property name="IOCount"         column="FILE_IO_CNT"    type="int"      />
+    <property name="BeginFileIOTime" column="BGN_FILE_IO_TM" type="DateTime" />
+    <property name="EndFileIOTime"   column="END_FILE_IO_TM" type="DateTime" />
+  </class>
+</hibernate-mapping>

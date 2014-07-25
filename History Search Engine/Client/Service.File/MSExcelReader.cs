@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileExtensionContracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +8,9 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Client.Service.File
 {
-    public class MSExcelReader : MSOfficeReader
+    public class MSExcelReader : IFileReader
     {
+        public string FilePath { get; set; }
         private Excel.Application excelApp = null;
 
         private Excel.Workbook workBook = null;
@@ -19,7 +21,7 @@ namespace Client.Service.File
             this.FilePath = filePath;
         }
 
-        override public string Read()
+        public string Read()
         {
             try
             {
@@ -28,9 +30,8 @@ namespace Client.Service.File
 
                 object missingValue = System.Reflection.Missing.Value;
                 object readOnly = true;
-                string filePath = (string)FilePath;
 
-                workBook = excelApp.Workbooks.Open(filePath,
+                workBook = excelApp.Workbooks.Open(FilePath,
                                                    missingValue,
                                                    readOnly,
                                                    missingValue, 
