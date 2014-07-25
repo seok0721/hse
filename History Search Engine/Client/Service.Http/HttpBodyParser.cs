@@ -29,7 +29,7 @@ namespace Client.Service.Http
 
             if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
             {
-                throw new ArgumentException("Invalid html document");
+                throw new ArgumentException(String.Join(", ",doc.ParseErrors.Select(o => o.ToString()).ToArray()));
             }
             else
             {
