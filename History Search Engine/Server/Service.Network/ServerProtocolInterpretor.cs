@@ -52,6 +52,8 @@ namespace Server.Service.Network
             htmlDao.Session = NHibernateLoader.Instance.Session;
             htmlWordDao.Session = NHibernateLoader.Instance.Session;
             userDao.Session = NHibernateLoader.Instance.Session;
+
+            serverDTP.Init();
         }
 
         public void Start()
@@ -112,11 +114,34 @@ namespace Server.Service.Network
                     case ProtocolRequest.HtmlWord:
                         HandleHtwdCommand(request.Argument);
                         break;
+                    case ProtocolRequest.List:
+                        HandleListCommand(request.Argument);
+                        break;
                     default:
                         SendResponse(ProtocolResponse.UnknownCommandError, "알 수 없는 명령어입니다.");
                         break;
                 }
             }
+        }
+
+        private void HandleListCommand(String argument)
+        {
+            if (!isLogin)
+            {
+                SendResponse(ProtocolResponse.NotLoggedIn, "로그인 후 사용하세요.");
+                return;
+            }
+
+            if (!ConnectUserDTP())
+            {
+                return;
+            }
+
+            serverDTP.SendFileList(userId, argument);
+
+            SendResponse(ProtocolResponse.CloseDataConnection, String.Format("[{0}]에 관련된 파일을 조회합니다.", argument));
+
+            serverDTP.CloseServerDTP();
         }
 
         private void HandleHtwdCommand(String argument)
@@ -138,7 +163,7 @@ namespace Server.Service.Network
             HtmlWord mHtmlWord = new HtmlWord();
             mHtmlWord.UserId = mHtml.UserId;
             mHtmlWord.HtmlId = mHtml.HtmlId;
-            mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml);
+            mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml) + 1;
             mHtmlWord.WordCount = 1;
 
             foreach (String htmlWord in split[1].Trim().Split(' '))
@@ -180,12 +205,12 @@ namespace Server.Service.Network
             logger.Info("단어를 파싱합니다.");
 
             FileWord mFileWord = new FileWord();
-            mFileWord.FileId = mFile.FileId;
             mFileWord.UserId = mFile.UserId;
+            mFileWord.FileId = mFile.FileId;
 
             logger.Info(mFile.ToString());
 
-            // FIXME 기존 파일의 카운트를 지우고 다시 생성할 것.
+            fileWordDao.DeleteFileWordAll(mFileWord); // 2014-07-25 ADD by KS
             foreach (String word in split[1].Trim().Split(' '))
             {
                 mFileWord.Word = word;

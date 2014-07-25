@@ -108,7 +108,7 @@ namespace Client.Service.Network
             logger.Info(checksum);
 
             if (checksum == new String('0', 32))
-            {   
+            {
                 return StoreCommandResponseCode.RequestNewFile;
             }
 
@@ -156,6 +156,20 @@ namespace Client.Service.Network
             }
 
             logger.Info("새 파일 모두 전송 완료");
+        }
+
+        public String ReceiveStream()
+        {
+            StringBuilder builder = new StringBuilder();
+            byte[] buffer = new byte[Constants.BufferSize];
+            int length = 0;
+
+            while((length = serverSocket.Receive(buffer, 0, Constants.BufferSize, SocketFlags.None)) > 0)
+            {
+                builder.Append(Encoding.UTF8.GetString(buffer, 0, length));
+            }
+
+            return builder.ToString();
         }
 
         /// <summary>

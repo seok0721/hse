@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using Reference.Model;
 using Reference.Utility;
 using Reference;
+using Server.Dao;
 using log4net;
 
 namespace Server.Service.Network
@@ -17,10 +18,16 @@ namespace Server.Service.Network
     {
         private ILog logger = LogManager.GetLogger(typeof(ServerDataTransferProcess));
         private Socket serverSocket;
+        private FileDao fileDao = new FileDao();
 
         public String BaseDirectory { get; set; }
         public String Host { get; set; }
         public int Port { get; set; }
+
+        public void Init()
+        {
+            fileDao.Session = NHibernateLoader.Instance.Session;
+        }
 
         public bool Connected
         {
@@ -54,6 +61,23 @@ namespace Server.Service.Network
         public void CloseServerDTP()
         {
             serverSocket.Close();
+        }
+
+        public void SendFileList(String userId, String keyword)
+        {
+            byte[] buffer = new byte[Constants.BufferSize];
+            int remainder = 0;
+
+            foreach (FileModel model in fileDao.ReadFileList(userId, keyword))
+            {
+                String line = String.Format("{0}\n", model.ToString().Replace('|', ' ').Trim());
+                remainder = line.Length;
+
+                while(remainder > 0)
+                {
+                    remainder -= serverSocket.Send(buffer, 0, ((remainder < buffer.Length) ? remainder : buffer.Length), SocketFlags.None);
+                }
+            }
         }
 
         public void SendToRequestNewFile()
