@@ -169,6 +169,35 @@ namespace Client.Service.Network
             }
         }
 
+        public bool RetriveFileList(String keyword, out String result)
+        {
+            try
+            {
+                if (!SendPortCommand())
+                {
+                    result = null;
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                result = null;
+                return false;
+            }
+
+            try
+            {
+                return SendListCommand(keyword, out result);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                result = null;
+                return false;
+            }
+        }
+
         public bool RetriveFile(int fileId, String filePath, String fileName)
         {
             try
@@ -285,6 +314,81 @@ namespace Client.Service.Network
             }
 
             userDTP.ReceiveFileStream(String.Format("{0}\\{1}", fileModel.Path, fileModel.Name));
+            response = ReceiveResponse();
+
+            switch (response.Code)
+            {
+                // case ProtocolResponse.RestartMarkerReply:
+                case ProtocolResponse.CloseDataConnection:
+                    logger.Info(response.Message);
+
+                    if (userDTP.Connected)
+                    {
+                        userDTP.CloseServerDTP();
+                    }
+
+                    return true;
+                case ProtocolResponse.FileActionCompleted:
+                    logger.Info(response.Message);
+                    return true;
+                case ProtocolResponse.CannotOpenDataConnection:
+                case ProtocolResponse.ConnectionClosed:
+                case ProtocolResponse.LocalErrorInProcessing:
+                case ProtocolResponse.PageTypeUnknown:
+                case ProtocolResponse.ExceededStorageAllocation:
+                    logger.Info(response.Message);
+                    return false;
+                default:
+                    throw new Exception("알 수 없는 에러가 발생하였습니다.");
+            }
+        }
+
+        private bool SendListCommand(String keyword, out String result)
+        {
+            ProtocolResponse response;
+
+            SendRequest(ProtocolRequest.List, keyword);
+            response = ReceiveResponse();
+
+            switch (response.Code)
+            {
+                case ProtocolResponse.DataConnectionAlreadyOpen:
+                    logger.Info(response.Message);
+                    break;
+                case ProtocolResponse.OpenDataConnection:
+                    logger.Info(response.Message);
+
+                    if (!userDTP.Connected)
+                    {
+                        logger.Debug("서버 접속을 기다리는 중...");
+
+                        if (!userDTP.WaitServerDTP())
+                        {
+                            logger.Error("서버 데이터 전송 프로세스의 연결을 기다리는 도중 오류가 발생하였습니다.");
+                            result = null;
+                            return false;
+                        }
+
+                        logger.Debug("접속되었습니다.");
+                    }
+
+                    break;
+                case ProtocolResponse.NeedAccountForStoringFiles:
+                case ProtocolResponse.FileUnavailable:
+                case ProtocolResponse.InsuffcientStorageSpaceInSystem:
+                case ProtocolResponse.FileNameNotAllowed:
+                case ProtocolResponse.UnknownCommandError:
+                case ProtocolResponse.InvalidArgumentError:
+                case ProtocolResponse.ServiceNotAvailable:
+                case ProtocolResponse.NotLoggedIn:
+                    logger.Info(response.Message);
+                    result = null;
+                    return false;
+                default:
+                    throw new Exception("알 수 없는 에러가 발생하였습니다.");
+            }
+
+            result = userDTP.ReceiveStream();
             response = ReceiveResponse();
 
             switch (response.Code)

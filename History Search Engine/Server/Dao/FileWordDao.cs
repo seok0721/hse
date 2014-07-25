@@ -1,11 +1,19 @@
 ﻿using NHibernate;
 using Reference.Model;
+using System;
+using System.IO;
+using System.Data;
+using System.Text;
+using System.Collections;
+
 using System.Collections.Generic;
 
 namespace Server.Dao
 {
     public class FileWordDao : AbstractDao
     {
+        private StringBuilder builder = new StringBuilder();
+
         public FileWord CreateFileWord(FileWord model)
         {
             FileWord rtn;
@@ -28,6 +36,19 @@ namespace Server.Dao
         {
             Session.Clear();
             Session.Delete(model);
+            Session.Flush();
+        }
+
+        public void DeleteFileWordAll(FileWord model)
+        {
+            builder.Clear();
+            builder
+                .AppendFormat(" DELETE FROM TBL_FILE_WORD")
+                .AppendFormat("  WHERE USR_ID  = '{0}'", model.UserId)
+                .AppendFormat("    AND FILE_ID = '{1}'", model.FileId);
+
+            Session.Clear();
+            Session.Delete(builder.ToString());
             Session.Flush();
         }
 

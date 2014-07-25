@@ -103,7 +103,7 @@ namespace Client.View
             foreach (KeyValuePair<string, string> pair in packet.Header)
             {
                 // Use the packet which contain HTML code.
-                if (pair.Key == "Content-Type" && pair.Value == "text/html")
+                if (pair.Key == "Content-Type" && pair.Value.Contains("text/html") && packet.Content != null)
                 {
                     // Parsing the content of packet.
                     List<string> texts = parser.parse(packet.Content);

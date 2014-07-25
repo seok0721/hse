@@ -37,7 +37,7 @@ namespace Reference.Protocol
         /// <summary>
         /// 서버에 저장된 파일의 목록을 조회합니다
         /// </summary>
-        public const String List = "LIST"; // "DATE" <yyyy-MM-dd:String> | "WORD" <Keyword:String>
+        public const String List = "LIST"; // "keyword" (구:"DATE" <yyyy-MM-dd:String> | "WORD" <Keyword:String>)
 
         /// <summary>
         /// 로컬 데이터베이스에 쌓여있는 데이터를 서버로 전송합니다.
