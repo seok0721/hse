@@ -53,7 +53,7 @@ namespace Server.Dao
                .SingleOrDefault<FileModel>();
         }
 
-        public IList<FileModel> ReadFileList(String userId, String keyword)
+        public IList<FileModel> ReadFileList(String userId, String[] keywordArray)
         {
             builder.Clear();
             builder
@@ -70,7 +70,30 @@ namespace Server.Dao
                 .AppendFormat("      INNER JOIN TBL_FILE_WORD C")
                 .AppendFormat("         ON C.USR_ID  = B.USR_ID")
                 .AppendFormat("        AND C.FILE_ID = B.FILE_ID")
-                .AppendFormat("        AND C.FILE_WD LIKE '%{0}%'", keyword)
+                .AppendFormat("        AND")
+                .AppendFormat("          (");
+
+            for (int i = 0; i < keywordArray.Length; i++)
+            {
+                if (keywordArray[i].Length == 0)
+                {
+                    continue;
+                }
+
+                if (i == 0)
+                {
+                    builder
+                        .AppendFormat("    C.FILE_WD LIKE '%{0}%'", keywordArray[i]);
+                }
+                else
+                {
+                    builder
+                        .AppendFormat(" OR C.FILE_WD LIKE '%{0}%'", keywordArray[i]);
+                }
+            }
+
+            builder
+                .AppendFormat("          )")
                 .AppendFormat("      WHERE A.USR_ID  = '{0}'", userId)
                 .AppendFormat("   GROUP BY B.USR_ID,")
                 .AppendFormat("            B.FILE_ID,")

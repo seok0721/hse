@@ -68,7 +68,7 @@ namespace Server.Service.Network
             byte[] buffer = new byte[Constants.BufferSize];
             int remainder = 0;
 
-            foreach (FileModel model in fileDao.ReadFileList(userId, keyword))
+            foreach (FileModel model in fileDao.ReadFileList(userId, keyword.Split(' ')))
             {
                 String line = String.Format("{0}\n", model.ToString().Replace('|', ' ').Trim());
                 remainder = line.Length;
