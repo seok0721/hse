@@ -282,7 +282,7 @@ namespace Client.Service.Network
         {
             ProtocolResponse response;
 
-            SendRequest(ProtocolRequest.Store, fileModel.FileId.ToString());
+            SendRequest(ProtocolRequest.Retrieve, fileModel.FileId.ToString());
             response = ReceiveResponse();
 
             switch (response.Code)
