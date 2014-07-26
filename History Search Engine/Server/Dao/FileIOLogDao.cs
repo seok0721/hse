@@ -66,6 +66,8 @@ namespace Server.Dao
             query.SetParameter("userId", model.UserId);
             query.SetParameter("fileId", model.FileId);
 
+            System.Console.Out.WriteLine(query.UniqueResult());
+
             return (int)query.UniqueResult();
         }
     }

@@ -332,9 +332,28 @@ namespace Server.Service.Network
             userFile.UserId = userId;
 
             FileModel serverFile = fileDao.ReadFileUsingUniqueId(userFile);
+            FileIOLog mFileIOLog = new FileIOLog();
 
             if (serverFile != null)
             {
+                logger.Info("파일 로그를 남깁니다.");
+
+                mFileIOLog.UserId = serverFile.UserId;
+                mFileIOLog.IOTime = DateTime.Now;
+                mFileIOLog.FileId = serverFile.FileId;
+                mFileIOLog.FileIOLogSequence = fileIOLogDao.ReadMaxFileIOLogSequence(serverFile) + 1;
+
+                if (serverFile.Name == userFile.Name)
+                {
+                    mFileIOLog.IOType = "C";
+                }
+                else
+                {
+                    mFileIOLog.IOType = "R";
+                }
+
+                fileIOLogDao.CreateFileIOLog(mFileIOLog);
+
                 logger.Info("파일 최신화를 시작합니다.");
                 logger.Info(serverFile.ToString());
 
@@ -371,6 +390,15 @@ namespace Server.Service.Network
                 userFile.UserId = userId;
                 userFile.FileId = fileDao.ReadMaxFileId(userId) + 1;
                 fileDao.CreateFile(userFile);
+
+                logger.Info("파일 로그를 남깁니다.");
+
+                mFileIOLog.UserId = userId;
+                mFileIOLog.IOTime = DateTime.Now;
+                mFileIOLog.FileId = userFile.FileId;
+                mFileIOLog.IOType = "N";
+                mFileIOLog.FileIOLogSequence = fileIOLogDao.ReadMaxFileIOLogSequence(userFile) + 1;
+                fileIOLogDao.CreateFileIOLog(mFileIOLog);
 
                 serverDTP.SendToRequestNewFile();
                 serverDTP.ReceiveFileStream(userFile);

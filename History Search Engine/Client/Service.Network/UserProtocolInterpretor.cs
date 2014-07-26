@@ -177,6 +177,11 @@ namespace Client.Service.Network
             fileList = null;
             urlList = null;
 
+            if (keyword == null || keyword == String.Empty)
+            {
+                return false;
+            }
+
             try
             {
                 if (!SendPortCommand())
@@ -277,7 +282,7 @@ namespace Client.Service.Network
         {
             ProtocolResponse response;
 
-            SendRequest(ProtocolRequest.Store, fileModel.FileId.ToString());
+            SendRequest(ProtocolRequest.Retrieve, fileModel.FileId.ToString());
             response = ReceiveResponse();
 
             switch (response.Code)

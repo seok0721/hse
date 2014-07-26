@@ -92,9 +92,10 @@ namespace Server.Service.Network
 
             foreach (String file in fileList)
             {
-                for (buffer = Encoding.UTF8.GetBytes(file), remainder = file.Length; remainder > 0; )
+                logger.Info(file);
+                for (buffer = Encoding.UTF8.GetBytes(file), remainder = buffer.Length; remainder > 0; )
                 {
-                    remainder -= serverSocket.Send(buffer, file.Length - remainder,
+                    remainder -= serverSocket.Send(buffer, buffer.Length - remainder,
                         ((remainder < buffer.Length) ? remainder : buffer.Length), SocketFlags.None);
                 }
 
@@ -105,9 +106,9 @@ namespace Server.Service.Network
             {
                 String html = (String)htmlList[i];
 
-                for (buffer = Encoding.UTF8.GetBytes(html), remainder = html.Length; remainder > 0; )
+                for (buffer = Encoding.UTF8.GetBytes(html), remainder = buffer.Length; remainder > 0; )
                 {
-                    remainder -= serverSocket.Send(buffer, html.Length - remainder,
+                    remainder -= serverSocket.Send(buffer, buffer.Length - remainder,
                         ((remainder < buffer.Length) ? remainder : buffer.Length), SocketFlags.None);
                 }
 
