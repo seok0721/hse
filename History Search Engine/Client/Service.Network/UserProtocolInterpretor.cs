@@ -20,7 +20,8 @@ namespace Client.Service.Network
         private StreamReader reader;
         private StreamWriter writer;
         private Socket socket;
-        private Reference.Utility.Properties properties = new Reference.Utility.Properties();
+        private String publicIp;
+        private Properties properties = new Properties();
 
         public void Init()
         {
@@ -28,6 +29,8 @@ namespace Client.Service.Network
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+            publicIp = GetIP();
 
             LoadConfiguration();
             userDTP.Init();
@@ -161,6 +164,35 @@ namespace Client.Service.Network
                 model.URL = url;
 
                 return SendHtwdCommand(model, wordList);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                return false;
+            }
+        }
+
+        public bool RetriveFileList(String keyword, out IList<FileModel> fileList, out IList<String> urlList)
+        {
+            fileList = null;
+            urlList = null;
+
+            try
+            {
+                if (!SendPortCommand())
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                return false;
+            }
+
+            try
+            {
+                return SendListCommand(keyword, out fileList, out urlList);
             }
             catch (Exception ex)
             {
@@ -314,6 +346,114 @@ namespace Client.Service.Network
             }
         }
 
+        private bool SendListCommand(String keyword, out IList<FileModel> fileList, out IList<String> urlList)
+        {
+            ProtocolResponse response;
+
+            fileList = new List<FileModel>();
+            urlList = new List<String>();
+
+            SendRequest(ProtocolRequest.List, keyword);
+            response = ReceiveResponse();
+
+            switch (response.Code)
+            {
+                case ProtocolResponse.DataConnectionAlreadyOpen:
+                    logger.Info(response.Message);
+                    break;
+                case ProtocolResponse.OpenDataConnection:
+                    logger.Info(response.Message);
+
+                    if (!userDTP.Connected)
+                    {
+                        logger.Debug("서버 접속을 기다리는 중...");
+
+                        if (!userDTP.WaitServerDTP())
+                        {
+                            logger.Error("서버 데이터 전송 프로세스의 연결을 기다리는 도중 오류가 발생하였습니다.");
+                            return false;
+                        }
+
+                        logger.Debug("접속되었습니다.");
+                    }
+
+                    break;
+                case ProtocolResponse.NeedAccountForStoringFiles:
+                case ProtocolResponse.FileUnavailable:
+                case ProtocolResponse.InsuffcientStorageSpaceInSystem:
+                case ProtocolResponse.FileNameNotAllowed:
+                case ProtocolResponse.UnknownCommandError:
+                case ProtocolResponse.InvalidArgumentError:
+                case ProtocolResponse.ServiceNotAvailable:
+                case ProtocolResponse.NotLoggedIn:
+                    logger.Info(response.Message);
+                    return false;
+                default:
+                    throw new Exception("알 수 없는 에러가 발생하였습니다.");
+            }
+
+            String[] rows = userDTP.ReceiveStream().Split('\n');
+            String[] pair;
+            String[] values;
+            int fileCount = 0;
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                if (i == 0)
+                {
+                    pair = rows[i].Split(' ');
+                    fileCount = int.Parse(pair[0]);
+                }
+                else
+                {
+                    if (i > fileCount)
+                    {
+                        urlList.Add(rows[i]);
+                    }
+                    else
+                    {
+                        values = rows[i].Split('|');
+
+                        FileModel model = new FileModel();
+                        model.FileId = int.Parse(values[0]);
+                        model.Name = values[1];
+                        model.Size = long.Parse(values[2]);
+                        model.LastUpdateTime = DateTime.Parse(values[3]);
+
+                        fileList.Add(model);
+                    }
+                }
+            }
+
+            response = ReceiveResponse();
+
+            switch (response.Code)
+            {
+                // case ProtocolResponse.RestartMarkerReply:
+                case ProtocolResponse.CloseDataConnection:
+                    logger.Info(response.Message);
+
+                    if (userDTP.Connected)
+                    {
+                        userDTP.CloseServerDTP();
+                    }
+
+                    return true;
+                case ProtocolResponse.FileActionCompleted:
+                    logger.Info(response.Message);
+                    return true;
+                case ProtocolResponse.CannotOpenDataConnection:
+                case ProtocolResponse.ConnectionClosed:
+                case ProtocolResponse.LocalErrorInProcessing:
+                case ProtocolResponse.PageTypeUnknown:
+                case ProtocolResponse.ExceededStorageAllocation:
+                    logger.Info(response.Message);
+                    return false;
+                default:
+                    throw new Exception("알 수 없는 에러가 발생하였습니다.");
+            }
+        }
+
         private bool SendStorCommand(FileModel fileModel)
         {
             ProtocolResponse response;
@@ -402,14 +542,16 @@ namespace Client.Service.Network
         private bool SendPortCommand()
         {
             ProtocolResponse response;
-
+            logger.Info("aaaaaaaaaaaa");
             if (userDTP.Connected)
             {
                 return true;
             }
 
+            logger.Info("bbbbbbbbbbbb");
             if (!userDTP.Opened)
             {
+                logger.Info("cccccccccccccc");
                 if (!userDTP.OpenUserDTP(int.Parse(properties["USER_DTP_BACKLOG"])))
                 {
                     return false;
@@ -419,6 +561,7 @@ namespace Client.Service.Network
             SendRequest(ProtocolRequest.DataPort, String.Format("{0},{1},{2}",
                 GetIP().Replace('.', ','), (userDTP.Port & 0xFF00) >> 8, (userDTP.Port & 0x00FF)));
 
+            logger.Info("eeeeeeeeeeeeeeeeee");
             response = ReceiveResponse();
 
             switch (response.Code)
@@ -569,10 +712,15 @@ namespace Client.Service.Network
 
         private String GetIP()
         {
-             WebClient client = new WebClient();
-             //FIXME 공인 아이피 아니면 안됨...
-             return client.DownloadString("http://icanhazip.com").Replace("\r", "").Replace("\n", "");
-             //return "127.0.0.1";
+            if (publicIp != null)
+            {
+                return publicIp;
+            }
+
+            WebClient client = new WebClient();
+            //FIXME 공인 아이피 아니면 안됨...
+            return client.DownloadString("http://icanhazip.com").Replace("\r", "").Replace("\n", "");
+            //return "127.0.0.1";
 
             //IEnumerator<IPAddress> e = Dns.GetHostEntry(Dns.GetHostName()).AddressList.Reverse().GetEnumerator();
 
