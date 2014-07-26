@@ -20,6 +20,7 @@ namespace Client.Service.Network
         private StreamReader reader;
         private StreamWriter writer;
         private Socket socket;
+        private String publicIp;
         private Properties properties = new Properties();
 
         public void Init()
@@ -28,6 +29,8 @@ namespace Client.Service.Network
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+            publicIp = GetIP();
 
             LoadConfiguration();
             userDTP.Init();
@@ -173,11 +176,13 @@ namespace Client.Service.Network
         {
             try
             {
+                logger.Info("11111111111111111");
                 if (!SendPortCommand())
                 {
                     result = null;
                     return false;
                 }
+                logger.Info("22222222222222222");
             }
             catch (Exception ex)
             {
@@ -188,6 +193,7 @@ namespace Client.Service.Network
 
             try
             {
+                logger.Info("333333333333333333");
                 return SendListCommand(keyword, out result);
             }
             catch (Exception ex)
@@ -506,14 +512,16 @@ namespace Client.Service.Network
         private bool SendPortCommand()
         {
             ProtocolResponse response;
-
+            logger.Info("aaaaaaaaaaaa");
             if (userDTP.Connected)
             {
                 return true;
             }
 
+            logger.Info("bbbbbbbbbbbb");
             if (!userDTP.Opened)
             {
+                logger.Info("cccccccccccccc");
                 if (!userDTP.OpenUserDTP(int.Parse(properties["USER_DTP_BACKLOG"])))
                 {
                     return false;
@@ -523,6 +531,7 @@ namespace Client.Service.Network
             SendRequest(ProtocolRequest.DataPort, String.Format("{0},{1},{2}",
                 GetIP().Replace('.', ','), (userDTP.Port & 0xFF00) >> 8, (userDTP.Port & 0x00FF)));
 
+            logger.Info("eeeeeeeeeeeeeeeeee");
             response = ReceiveResponse();
 
             switch (response.Code)
@@ -673,6 +682,11 @@ namespace Client.Service.Network
 
         private String GetIP()
         {
+            if (publicIp != null)
+            {
+                return publicIp;
+            }
+
              WebClient client = new WebClient();
              //FIXME 공인 아이피 아니면 안됨...
              return client.DownloadString("http://icanhazip.com").Replace("\r", "").Replace("\n", "");

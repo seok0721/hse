@@ -152,7 +152,7 @@ namespace Server.Service.Network
                 return;
             }
 
-            String[] split = argument.Split(',');
+            String[] split = argument.Split(new char[] { ',' }, 2);
             HtmlModel mHtml = new HtmlModel();
             mHtml.UserId = userId;
             mHtml.HtmlId = htmlDao.ReadMaxHtmlId(userId) + 1;
@@ -163,13 +163,29 @@ namespace Server.Service.Network
             HtmlWord mHtmlWord = new HtmlWord();
             mHtmlWord.UserId = mHtml.UserId;
             mHtmlWord.HtmlId = mHtml.HtmlId;
-            mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml) + 1;
-            mHtmlWord.WordCount = 1;
 
             foreach (String htmlWord in split[1].Trim().Split(' '))
             {
-                mHtmlWord.Word = htmlWord;
-                htmlWordDao.CreateHtmlWord(mHtmlWord);
+                mHtmlWord.Word = htmlWord.ToLower();
+                mHtmlWord = htmlWordDao.ReadHtmlWordUsingWord(mHtmlWord);
+
+                if (mHtmlWord == null)
+                {
+                    mHtmlWord = new HtmlWord();
+                    mHtmlWord.UserId = mHtml.UserId;
+                    mHtmlWord.HtmlId = mHtml.HtmlId;
+                    mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml) + 1;
+                    mHtmlWord.Word = htmlWord.ToLower();
+                    mHtmlWord.WordCount = 1;
+
+                    htmlWordDao.CreateHtmlWord(mHtmlWord);
+                }
+                else
+                {
+                    mHtmlWord.WordCount += 1;
+
+                    htmlWordDao.UpdateHtmlWord(mHtmlWord);
+                }
             }
 
             SendResponse(ProtocolResponse.CommandOkay, "HTML 정보가 추가되었습니다.");
@@ -314,7 +330,7 @@ namespace Server.Service.Network
 
             FileModel userFile = FileModel.FromString(argument);
             userFile.UserId = userId;
-            
+
             FileModel serverFile = fileDao.ReadFileUsingUniqueId(userFile);
 
             if (serverFile != null)
