@@ -73,17 +73,19 @@ namespace Server.Service.Network
             int remainder = 0;
 
             String[] keywordArray = keyword.Split(' ');
-            logger.Info("11111111111111111111111");
             ArrayList fileList = fileDao.ReadFileList(userId, keywordArray);
-            logger.Info("22222222222222222");
             ArrayList htmlList = htmlDao.ReadHtmlList(userId, keywordArray);
-            logger.Info("3333333333333");
             String header = String.Format("{0} {1}", fileList.Count, htmlList.Count);
 
             for (buffer = Encoding.UTF8.GetBytes(header), remainder = header.Length; remainder > 0; )
             {
                 remainder -= serverSocket.Send(buffer, header.Length - remainder,
                     ((remainder < buffer.Length) ? remainder : buffer.Length), SocketFlags.None);
+            }
+
+            if (fileList.Count == 0 && htmlList.Count == 0)
+            {
+                return;
             }
 
             serverSocket.Send(newline, 0, newline.Length, SocketFlags.None);

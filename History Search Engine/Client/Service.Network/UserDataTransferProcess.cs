@@ -180,7 +180,6 @@ namespace Client.Service.Network
         {
             byte[] buffer = new byte[Constants.BufferSize];
             int length = 0;
-            logger.Info("11111111111111111111");
             logger.Debug("새 파일 수신을 시작합니다.");
 
             using (FileStream fs = System.IO.File.OpenWrite(filePath))
@@ -190,7 +189,6 @@ namespace Client.Service.Network
                     fs.Write(buffer, 0, length);
                 }
             }
-            logger.Info("222222222222222222");
         }
 
         /// <summary>
