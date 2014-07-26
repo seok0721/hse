@@ -21,7 +21,7 @@ namespace Client.Service.Network
         private StreamWriter writer;
         private Socket socket;
         private String publicIp;
-        private Properties properties = new Properties();
+        private Reference.Utility.Properties properties = new Reference.Utility.Properties();
 
         public void Init()
         {

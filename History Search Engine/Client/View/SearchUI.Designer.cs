@@ -38,9 +38,10 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.TopMatch = new System.Windows.Forms.Label();
+            this.FileName = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.label3 = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -145,26 +146,34 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // label4
+            // TopMatch
             // 
-            this.label4.Font = new System.Drawing.Font("나눔고딕", 9F, System.Drawing.FontStyle.Bold);
-            this.label4.Location = new System.Drawing.Point(36, 87);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(228, 16);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "WordSample.docx";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+            this.TopMatch.Font = new System.Drawing.Font("나눔고딕", 9F, System.Drawing.FontStyle.Bold);
+            this.TopMatch.Location = new System.Drawing.Point(36, 87);
+            this.TopMatch.Name = "TopMatch";
+            this.TopMatch.Size = new System.Drawing.Size(228, 16);
+            this.TopMatch.TabIndex = 8;
+            this.TopMatch.Text = "WordSample.docx";
             // 
-            // label5
+            // FileName
             // 
-            this.label5.Font = new System.Drawing.Font("나눔고딕", 15F, System.Drawing.FontStyle.Bold);
-            this.label5.Location = new System.Drawing.Point(372, 325);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(228, 30);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "WordSample.docx";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label5.Click += new System.EventHandler(this.label4_Click);
+            this.FileName.Font = new System.Drawing.Font("나눔고딕", 15F, System.Drawing.FontStyle.Bold);
+            this.FileName.Location = new System.Drawing.Point(372, 325);
+            this.FileName.Name = "FileName";
+            this.FileName.Size = new System.Drawing.Size(228, 30);
+            this.FileName.TabIndex = 8;
+            this.FileName.Text = "WordSample.docx";
+            this.FileName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.FileName.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(84, 223);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(38, 12);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "label3";
             // 
             // SearchUI
             // 
@@ -172,8 +181,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
             this.ClientSize = new System.Drawing.Size(704, 612);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.TopMatch);
+            this.Controls.Add(this.FileName);
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.panel4);
@@ -185,7 +195,6 @@
             this.Name = "SearchUI";
             this.Opacity = 0.95D;
             this.Text = "SearchUI";
-            this.Load += new System.EventHandler(this.SearchUI_Load);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
@@ -210,8 +219,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label TopMatch;
+        private System.Windows.Forms.Label FileName;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Label label3;
     }
 }
