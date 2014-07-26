@@ -67,7 +67,7 @@ namespace Server.Dao
                     .AppendFormat("      INNER JOIN TBL_HTML_WORD B")
                     .AppendFormat("         ON B.USR_ID  = A.USR_ID")
                     .AppendFormat("        AND B.HTML_ID = A.HTML_ID")
-                    .AppendFormat("        AND LOWER(B.HTML_WD) = LOWER('{0}')", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("        AND LOWER(B.HTML_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
                     .AppendFormat("      WHERE A.USR_ID = :userId");
             }
 

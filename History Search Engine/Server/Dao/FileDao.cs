@@ -117,30 +117,47 @@ namespace Server.Dao
             {
                 if (i > 0)
                 {
-                    builder.AppendFormat(" UNION");
+                    builder
+                        .AppendFormat("  UNION");
                 }
 
                 builder
-                    .AppendFormat(" SELECT A.USR_ID")
-                    .AppendFormat("      , A.FILE_ID")
-                    .AppendFormat("      , A.FILE_NM")
-                    .AppendFormat("      , A.FILE_SZ")
-                    .AppendFormat("      , B.FILE_WD_CNT")
-                    .AppendFormat("      , DENSE_RANK() OVER(ORDER BY B.FILE_WD_CNT DESC) FILE_RANK")
-                    .AppendFormat("      , B.FILE_WD")
-                    .AppendFormat("      , A.LAST_UPDATE_TM")
-                    .AppendFormat("   FROM TBL_FILE A")
-                    .AppendFormat("  INNER JOIN TBL_FILE_WORD B")
-                    .AppendFormat("     ON B.USR_ID  = A.USR_ID")
-                    .AppendFormat("    AND B.FILE_ID = A.FILE_ID")
-                    .AppendFormat("    AND LOWER(B.FILE_WD) = LOWER('{0}')", keywordArray[i].Replace("\'", ""))
-                    .AppendFormat("  WHERE A.USR_ID = :userId");
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY B.FILE_WD_CNT DESC) FILE_RANK")
+                    .AppendFormat("          , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("      INNER JOIN TBL_FILE_WORD B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.FILE_ID = A.FILE_ID")
+                    .AppendFormat("        AND LOWER(B.FILE_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      WHERE A.USR_ID = :userId")
+                    .AppendFormat("      UNION")
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY COUNT(B.FILE_IO_TYPE) DESC) FILE_RANK")
+                    .AppendFormat("          , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("       LEFT OUTER JOIN TBL_FILE_IO_LOG B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.FILE_ID = A.FILE_ID")
+                    .AppendFormat("      WHERE A.USR_ID = :userId")
+                    .AppendFormat("        AND LOWER(A.FILE_NM) LIKE '%' + LOWER('TXT') + '%'")
+                    .AppendFormat("      GROUP BY A.USR_ID")
+                    .AppendFormat("             , A.FILE_ID")
+                    .AppendFormat("             , A.FILE_NM")
+                    .AppendFormat("             , A.FILE_SZ")
+                    .AppendFormat("             , A.LAST_UPDATE_TM");
             }
 
             builder
-                .AppendFormat("    ) A")
-                .AppendFormat("    LEFT OUTER JOIN")
-                .AppendFormat("    (");
+                .AppendFormat("      ) A")
+                .AppendFormat("      LEFT OUTER JOIN")
+                .AppendFormat("      (");
 
             for (int i = 0; i < keywordArray.Length; i++)
             {
@@ -160,7 +177,7 @@ namespace Server.Dao
                     .AppendFormat("  INNER JOIN TBL_HTML_WORD B")
                     .AppendFormat("     ON B.USR_ID  = A.USR_ID")
                     .AppendFormat("    AND B.HTML_ID = A.HTML_ID")
-                    .AppendFormat("    AND LOWER(B.HTML_WD) = LOWER('{0}')", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("    AND LOWER(B.HTML_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
                     .AppendFormat("  WHERE A.USR_ID = :userId");
             }
 

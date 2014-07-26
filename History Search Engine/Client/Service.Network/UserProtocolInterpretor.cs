@@ -177,6 +177,11 @@ namespace Client.Service.Network
             fileList = null;
             urlList = null;
 
+            if (keyword == null || keyword == String.Empty)
+            {
+                return false;
+            }
+
             try
             {
                 if (!SendPortCommand())
