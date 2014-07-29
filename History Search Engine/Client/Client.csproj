@@ -90,6 +90,7 @@
     <Compile Include="Service.Network\UserDataTransferProcess.cs" />
     <Compile Include="Service.Network\UserProtocolInterpretor.cs" />
     <Compile Include="Utility\FileExtensionManager.cs" />
+    <Compile Include="Utility\KeyboardHook.cs" />
     <Compile Include="View\LoginView.cs">
       <SubType>Form</SubType>
     </Compile>

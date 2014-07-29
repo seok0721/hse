@@ -12,11 +12,16 @@ using System.Runtime.InteropServices;
 using Client.Service.Network;
 using System.IO;
 using Reference.Model;
-
+using Client.Utility;
+using Client.Service.Http;
+using Client.Service.File;
 namespace Client.View
 {
     public partial class SearchUI : Form
     {
+
+        private static HttpPacketCapture packetCapture = new HttpPacketCapture();
+        private static HttpBodyParser parser = new HttpBodyParser();
 
         private const string DRAG_SOURCE_PREFIX = "DragNDrop__Temp__";
         private object objDragItem;
@@ -37,6 +42,8 @@ namespace Client.View
         private volatile IList<FileModel> fileLists;
         private volatile IList<String> urlLists;
 
+        GlobalKeyboardHook ghk = new GlobalKeyboardHook();
+
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
         (
@@ -52,9 +59,9 @@ namespace Client.View
         {
             InitializeComponent();
             mClient = client;
-           
+
             this.FormBorderStyle = FormBorderStyle.None;
-            Height = 55;
+            //Height = 55;
             Region = System.Drawing.Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
 
             TBSearch.KeyUp += new KeyEventHandler(TBSearch_KeyUp);
@@ -63,6 +70,45 @@ namespace Client.View
             TopMatch.MouseDown += TopMatch_MouseDown;
             TopMatch.MouseMove += TopMatch_MouseMove;
             TopMatch.DoubleClick += TopMatch_DoubleClick;
+
+            ghk.HookedKeys.Add(Keys.F12);
+            ghk.KeyDown += new KeyEventHandler(Hooking);
+
+            init();
+
+
+        }
+
+        private void ShowMessage(String title, String message)
+        {
+            TrayIcon.BalloonTipText = message;
+            TrayIcon.BalloonTipIcon = ToolTipIcon.Info;
+            TrayIcon.BalloonTipTitle = title;
+            TrayIcon.ShowBalloonTip(500);
+        }
+
+        private void init()
+        {
+            parser.StartNode = "//body";
+
+            packetCapture.Start(1000);
+            packetCapture.OnHttpPacketArrival += HttpPacketArriveEvent;
+
+            OnChangedHandler onChangeHandler = new OnChangedHandler(OnChanged);
+            OnRenamedHandler onRenamedHandler = new OnRenamedHandler(OnRenamed);
+
+            IOTracker track = new IOTracker("C:\\", onChangeHandler, onRenamedHandler);
+
+            track.AddFileType("txt");
+            track.AddFileType("ppt");
+            try
+            {
+                track.StartWatch();
+            }
+            catch (Exception e)
+            {
+                Console.Out.WriteLine(e.ToString());
+            }
         }
 
         void TopMatch_DoubleClick(object sender, EventArgs e)
@@ -72,7 +118,7 @@ namespace Client.View
             mClient.RetriveFile(fileLists[0].FileId, pathDownload, fileLists[0].Name);
 
         }
-        
+
 
         private void waitForKeyboardStop()
         {
@@ -83,7 +129,7 @@ namespace Client.View
                 Thread.Sleep(100);
             }
 
-            
+
 
 
             this.Invoke(new MethodInvoker(delegate()
@@ -96,7 +142,7 @@ namespace Client.View
                 {
 
                     mClient.RetriveFileList(TBSearch.Text, out fileLists, out urlLists);
-                    if (fileLists!= null && fileLists.Count > 0)
+                    if (fileLists != null && fileLists.Count > 0)
                     {
 
                         TopMatch.Text = fileLists[0].Name;
@@ -130,7 +176,7 @@ namespace Client.View
 
         private void TBSearch_KeyUp(object sender, KeyEventArgs e)
         {
-           
+
             if (timer == 0)
             {
                 Thread thread = new Thread(waitForKeyboardStop);
@@ -172,7 +218,7 @@ namespace Client.View
         private void TopMatch_MouseDown(object sender, MouseEventArgs e)
         {           //Cears the Drag Data
             ClearDragData();
-            if (e.Button == MouseButtons.Left )
+            if (e.Button == MouseButtons.Left)
             {
                 objDragItem = TopMatch.Text;
                 itemDragStart = true;
@@ -181,16 +227,17 @@ namespace Client.View
 
         private void TopMatch_MouseMove(object sender, MouseEventArgs e)
         {
-            
+
             if (e.Button == MouseButtons.None)
             {
                 return;
             }
             if (itemDragStart && objDragItem != null)
             {
-                
-                dragItemTempFileName = string.Format("{0}{1}{2}.tmp",Path.GetTempPath() , DRAG_SOURCE_PREFIX, TopMatch.Text);
-                try {
+
+                dragItemTempFileName = string.Format("{0}{1}{2}.tmp", Path.GetTempPath(), DRAG_SOURCE_PREFIX, TopMatch.Text);
+                try
+                {
                     //MessageBox.Show(dragItemTempFileName, dragItemTempFileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     CreateDragItemTempFile(dragItemTempFileName);
                     string[] fileList = new string[] { dragItemTempFileName };
@@ -203,7 +250,7 @@ namespace Client.View
                     MessageBox.Show(ex.Message, "DragNDrop Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            
+
         }
 
         private void CreateDragItemTempFile(string fileName)
@@ -232,5 +279,78 @@ namespace Client.View
         {
 
         }
+
+        void Hooking(object sender, KeyEventArgs e)
+        {
+            Visible = !Visible;
+        }
+
+        private static void HttpPacketArriveEvent(object sender, HttpPacketArriveEvnetArgs e)
+        {
+            HttpPacket packet = e.Packet;
+
+            // If the http connection use GET method, get HOST name from packet
+            if (packet.Protocol.Contains("GET"))
+            {
+                System.Diagnostics.Debug.WriteLine(packet.Header["Host"]);
+            }
+            // Or it use HTTP method, get contents of packet
+            else if (packet.Protocol.Contains("HTTP"))
+            {
+                System.Diagnostics.Debug.WriteLine(packet.Header["Content-Type"]);
+                if (packet.Header["Content-Type"].Contains("text/html") && packet.Content != null)
+                {
+                    try
+                    {
+                        // Parsing the content of packet.
+                        List<string> texts = parser.parse(packet.Content);
+
+                        if (texts != null)
+                        {
+                            for (int i = 0; i < texts.Count; i++)
+                            {
+                                //Console.WriteLine(texts[i]);
+                            }
+                        }
+                    }
+                    catch (ArgumentException argExep)
+                    {
+                        // Write the detail of exception using logger
+                        System.Diagnostics.Debug.WriteLine(argExep.Message);
+                    }
+                }
+            }
+        }
+
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            ShowMessage("파일이 변경 되었습니다.", e.Name);
+            mClient.StoreFile(new FileInfo(e.FullPath));
+            
+        }
+
+        private void OnRenamed(object source, RenamedEventArgs e)
+        {
+            ShowMessage("파일 이름이 변경되었습니다.",
+                "파일 " + e.OldName + "가" + e.Name + "로 변경되었습니다.");
+        }
+
+        private void TrayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Show();
+        }
+
+        private void 종료ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void 열기ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Show();
+        }
+
+
     }
+
 }
