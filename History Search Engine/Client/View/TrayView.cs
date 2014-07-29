@@ -71,16 +71,56 @@ namespace Client.View
                             new FileInfo(e.FullPath.Replace("~$", "")),
                             new MSWordReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
                             .Replace("\r", " ").Replace("\n", " "));
-                        
+
                     }
-                } ,
+                },
                 (s, e) =>
                 {
-                    ShowMessage("Rename", e.OldFullPath +"to "+ e.FullPath);
-              
-                    
+                    ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+
+
                 }
                 );
+
+            track.AddFileType("pptx",
+                (s, e) =>
+                {
+                    ShowMessage("파일이 변경 되었습니다.", e.Name);
+                    if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                    {
+                        mClient.StoreFileWord(
+                            new FileInfo(e.FullPath.Replace("~$", "")),
+                            new MSPowerPointReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                            .Replace("\r", " ").Replace("\n", " "));
+
+                    }
+                },
+                (s, e) =>
+                {
+                    ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+                }
+                );
+
+            track.AddFileType("xlsx",
+                (s, e) =>
+                {
+                    ShowMessage("파일이 변경 되었습니다.", e.Name);
+                    if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                    {
+                        mClient.StoreFileWord(
+                            new FileInfo(e.FullPath.Replace("~$", "")),
+                            new MSExcelReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                            .Replace("\r", " ").Replace("\n", " "));
+
+                    }
+                },
+                (s, e) =>
+                {
+                    ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+                }
+                );
+
+            
             try
             {
                 track.StartWatch();
@@ -107,7 +147,7 @@ namespace Client.View
                 {
                     // Parsing the content of packet.
                     List<string> texts = parser.parse(packet.Content);
-                   
+
                     if (texts != null)
                     {
                         for (int i = 0; i < texts.Count; i++)
@@ -125,7 +165,7 @@ namespace Client.View
         {
             ShowMessage("파일이 변경 되었습니다.", e.Name);
             mClient.StoreFile(new FileInfo(e.FullPath));
-            
+
         }
 
         private void OnRenamed(object source, RenamedEventArgs e)
