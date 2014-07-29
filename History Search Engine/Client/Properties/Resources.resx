@@ -121,6 +121,9 @@
   <data name="docIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\docIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="docSmallIcon2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\docSmallIcon2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="icon2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -133,13 +136,19 @@
   <data name="icon21" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon21.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="docSmallIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\docSmallIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="icon3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="docSmallIcon2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\docSmallIcon2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="pptIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pptIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pptSmallIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pptSmallIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xlsxIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xlsxIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xlsxSmallIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xlsxSmallIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

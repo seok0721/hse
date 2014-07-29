@@ -73,16 +73,6 @@ namespace Client.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
-        internal static System.Drawing.Bitmap docSmallIcon {
-            get {
-                object obj = ResourceManager.GetObject("docSmallIcon", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
         internal static System.Drawing.Bitmap docSmallIcon2 {
             get {
                 object obj = ResourceManager.GetObject("docSmallIcon2", resourceCulture);
@@ -136,6 +126,46 @@ namespace Client.Properties {
         internal static System.Drawing.Bitmap icon3 {
             get {
                 object obj = ResourceManager.GetObject("icon3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap pptIcon {
+            get {
+                object obj = ResourceManager.GetObject("pptIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap pptSmallIcon {
+            get {
+                object obj = ResourceManager.GetObject("pptSmallIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap xlsxIcon {
+            get {
+                object obj = ResourceManager.GetObject("xlsxIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap xlsxSmallIcon {
+            get {
+                object obj = ResourceManager.GetObject("xlsxSmallIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

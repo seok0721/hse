@@ -187,6 +187,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\LoginView.resx">
       <DependentUpon>LoginView.cs</DependentUpon>
@@ -227,10 +228,19 @@
     <None Include="Resources\docIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\docSmallIcon.png" />
+    <None Include="Resources\docSmallIcon2.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\docSmallIcon2.png" />
+    <None Include="Resources\pptIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pptSmallIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsxIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsxSmallIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
