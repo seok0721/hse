@@ -25,11 +25,16 @@ namespace Client.Service.Http
         {
             List<string> textList = new List<string>();
 
+            if (content == null)
+            {
+                throw new ArgumentNullException("Content can not be null");
+            }
+
             doc.LoadHtml(content);
 
             if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
             {
-                throw new ArgumentException("Invalid html document");
+                throw new ArgumentException(String.Join(", ",doc.ParseErrors.Select(o => o.ToString()).ToArray()));
             }
             else
             {

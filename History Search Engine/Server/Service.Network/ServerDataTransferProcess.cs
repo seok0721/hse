@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Net.Sockets;
 using Reference.Model;
 using Reference.Utility;
 using Reference;
+using Server.Dao;
 using log4net;
 
 namespace Server.Service.Network
@@ -17,10 +19,18 @@ namespace Server.Service.Network
     {
         private ILog logger = LogManager.GetLogger(typeof(ServerDataTransferProcess));
         private Socket serverSocket;
+        private FileDao fileDao = new FileDao();
+        private HtmlDao htmlDao = new HtmlDao();
 
         public String BaseDirectory { get; set; }
         public String Host { get; set; }
         public int Port { get; set; }
+
+        public void Init()
+        {
+            fileDao.Session = NHibernateLoader.Instance.Session;
+            htmlDao.Session = NHibernateLoader.Instance.Session;
+        }
 
         public bool Connected
         {
@@ -34,7 +44,7 @@ namespace Server.Service.Network
         {
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            logger.DebugFormat("사용자 DTP에 접속 시도: {0}:{1}", Host, Port);
+            logger.InfoFormat("사용자 DTP에 접속 시도: {0}:{1}", Host, Port);
 
             try
             {
@@ -54,6 +64,59 @@ namespace Server.Service.Network
         public void CloseServerDTP()
         {
             serverSocket.Close();
+        }
+
+        public void SendFileList(String userId, String keyword)
+        {
+            byte[] newline = new byte[1] { (byte)'\n' };
+            byte[] buffer = new byte[Constants.BufferSize];
+            int remainder = 0;
+
+            String[] keywordArray = keyword.Split(' ');
+            ArrayList fileList = fileDao.ReadFileList(userId, keywordArray);
+            ArrayList htmlList = htmlDao.ReadHtmlList(userId, keywordArray);
+            String header = String.Format("{0} {1}", fileList.Count, htmlList.Count);
+
+            for (buffer = Encoding.UTF8.GetBytes(header), remainder = header.Length; remainder > 0; )
+            {
+                remainder -= serverSocket.Send(buffer, header.Length - remainder,
+                    ((remainder < buffer.Length) ? remainder : buffer.Length), SocketFlags.None);
+            }
+
+            if (fileList.Count == 0 && htmlList.Count == 0)
+            {
+                return;
+            }
+
+            serverSocket.Send(newline, 0, newline.Length, SocketFlags.None);
+
+            foreach (String file in fileList)
+            {
+                logger.Info(file);
+                for (buffer = Encoding.UTF8.GetBytes(file), remainder = buffer.Length; remainder > 0; )
+                {
+                    remainder -= serverSocket.Send(buffer, buffer.Length - remainder,
+                        ((remainder < buffer.Length) ? remainder : buffer.Length), SocketFlags.None);
+                }
+
+                serverSocket.Send(newline, 0, newline.Length, SocketFlags.None);
+            }
+
+            for (int i = 0; i < htmlList.Count; i++)
+            {
+                String html = (String)htmlList[i];
+
+                for (buffer = Encoding.UTF8.GetBytes(html), remainder = buffer.Length; remainder > 0; )
+                {
+                    remainder -= serverSocket.Send(buffer, buffer.Length - remainder,
+                        ((remainder < buffer.Length) ? remainder : buffer.Length), SocketFlags.None);
+                }
+
+                if (i != htmlList.Count - 1)
+                {
+                    serverSocket.Send(newline, 0, newline.Length, SocketFlags.None);
+                }
+            }
         }
 
         public void SendToRequestNewFile()

@@ -80,20 +80,34 @@ namespace Client.View
         {
             HttpPacket packet = e.Packet;
 
-            foreach (KeyValuePair<string, string> pair in packet.Header)
+            // If the http connection use GET method, get HOST name from packet
+            if (packet.Protocol.Contains("GET"))
             {
-                // Use the packet which contain HTML code.
-                if (pair.Key == "Content-Type" && pair.Value == "text/html")
+                System.Diagnostics.Debug.WriteLine(packet.Header["Host"]);
+            }
+            // Or it use HTTP method, get contents of packet
+            else if(packet.Protocol.Contains("HTTP"))
+            {
+                System.Diagnostics.Debug.WriteLine(packet.Header["Content-Type"]);
+                if (packet.Header["Content-Type"].Contains("text/html") && packet.Content != null)
                 {
-                    // Parsing the content of packet.
-                    List<string> texts = parser.parse(packet.Content);
-
-                    if (texts != null)
+                    try
                     {
-                        for (int i = 0; i < texts.Count; i++)
+                        // Parsing the content of packet.
+                        List<string> texts = parser.parse(packet.Content);
+
+                        if (texts != null)
                         {
-                            //Console.WriteLine(texts[i]);
+                            for (int i = 0; i < texts.Count; i++)
+                            {
+                                //Console.WriteLine(texts[i]);
+                            }
                         }
+                    }
+                    catch (ArgumentException argExep)
+                    {
+                        // Write the detail of exception using logger
+                        System.Diagnostics.Debug.WriteLine(argExep.Message);
                     }
                 }
             }

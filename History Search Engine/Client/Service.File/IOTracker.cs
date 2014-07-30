@@ -76,7 +76,7 @@ namespace Client.Service.File
             newWatcher.Created += new FileSystemEventHandler(mOnChanged);
             newWatcher.Deleted += new FileSystemEventHandler(mOnChanged);
             newWatcher.Renamed += new RenamedEventHandler(mOnRenamed);
-
+             
             //딕셔너리에 파일감시자 추가.
             watchers.Add(fileType, newWatcher);
         }

@@ -107,7 +107,15 @@ namespace Client.Service.Http
                         {
                             try
                             {
-                                readyAssembleHttpPacket.Add(new HttpPacket(packet));
+                                if (tcpPacket.DestinationPort == HTTP_PORT || tcpPacket.DestinationPort == HTTPS_PORT)
+                                {
+                                    HttpPacketArriveEvnetArgs packetEvent = new HttpPacketArriveEvnetArgs(new HttpPacket(packet));
+                                    OnHttpPacketArrived(packetEvent);
+                                }
+                                else
+                                {
+                                    readyAssembleHttpPacket.Add(new HttpPacket(packet));
+                                }
                             }
                             catch (ArgumentException exep)
                             {
