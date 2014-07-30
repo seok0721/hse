@@ -17,7 +17,7 @@ namespace Client.View
     public partial class TrayView : Form
     {
         private UserProtocolInterpretor mClient;
-        private static HttpPacketCapture packetCapture = new HttpPacketCapture();
+        private static HttpPacketCapture packetCapture;
 
         private static HttpBodyParser parser = new HttpBodyParser();
 
@@ -51,6 +51,8 @@ namespace Client.View
 
             parser.StartNode = "//body";
 
+            packetCapture = new HttpPacketCapture();
+
             packetCapture.Start(1000);
             packetCapture.OnHttpPacketArrival += HttpPacketArriveEvent;
 
@@ -59,8 +61,66 @@ namespace Client.View
 
             IOTracker track = new IOTracker("C:\\", onChangeHandler, onRenamedHandler);
 
-            track.AddFileType("txt");
-            track.AddFileType("ppt");
+            track.AddFileType("docx",
+                (s, e) =>
+                {
+                    ShowMessage("파일이 변경 되었습니다.", e.Name);
+                    if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                    {
+                        mClient.StoreFileWord(
+                            new FileInfo(e.FullPath.Replace("~$", "")),
+                            new MSWordReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                            .Replace("\r", " ").Replace("\n", " "));
+
+                    }
+                },
+                (s, e) =>
+                {
+                    ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+
+
+                }
+                );
+
+            track.AddFileType("pptx",
+                (s, e) =>
+                {
+                    ShowMessage("파일이 변경 되었습니다.", e.Name);
+                    if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                    {
+                        mClient.StoreFileWord(
+                            new FileInfo(e.FullPath.Replace("~$", "")),
+                            new MSPowerPointReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                            .Replace("\r", " ").Replace("\n", " "));
+
+                    }
+                },
+                (s, e) =>
+                {
+                    ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+                }
+                );
+
+            track.AddFileType("xlsx",
+                (s, e) =>
+                {
+                    ShowMessage("파일이 변경 되었습니다.", e.Name);
+                    if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                    {
+                        mClient.StoreFileWord(
+                            new FileInfo(e.FullPath.Replace("~$", "")),
+                            new MSExcelReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                            .Replace("\r", " ").Replace("\n", " "));
+
+                    }
+                },
+                (s, e) =>
+                {
+                    ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+                }
+                );
+
+            
             try
             {
                 track.StartWatch();
@@ -76,39 +136,27 @@ namespace Client.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void HttpPacketArriveEvent(object sender, HttpPacketArriveEvnetArgs e)
+        private void HttpPacketArriveEvent(object sender, HttpPacketArriveEvnetArgs e)
         {
             HttpPacket packet = e.Packet;
 
-            // If the http connection use GET method, get HOST name from packet
-            if (packet.Protocol.Contains("GET"))
+            foreach (KeyValuePair<string, string> pair in packet.Header)
             {
-                System.Diagnostics.Debug.WriteLine(packet.Header["Host"]);
-            }
-            // Or it use HTTP method, get contents of packet
-            else if(packet.Protocol.Contains("HTTP"))
-            {
-                System.Diagnostics.Debug.WriteLine(packet.Header["Content-Type"]);
-                if (packet.Header["Content-Type"].Contains("text/html") && packet.Content != null)
+                // Use the packet which contain HTML code.
+                if (pair.Key == "Content-Type" && pair.Value.Contains("text/html") && packet.Content != null)
                 {
-                    try
-                    {
-                        // Parsing the content of packet.
-                        List<string> texts = parser.parse(packet.Content);
+                    // Parsing the content of packet.
+                    List<string> texts = parser.parse(packet.Content);
 
-                        if (texts != null)
+                    if (texts != null)
+                    {
+                        for (int i = 0; i < texts.Count; i++)
                         {
-                            for (int i = 0; i < texts.Count; i++)
-                            {
-                                //Console.WriteLine(texts[i]);
-                            }
+                            Console.WriteLine(texts[i]);
                         }
                     }
-                    catch (ArgumentException argExep)
-                    {
-                        // Write the detail of exception using logger
-                        System.Diagnostics.Debug.WriteLine(argExep.Message);
-                    }
+
+                    mClient.StoreHtml("URL", string.Join(" ", texts));
                 }
             }
         }
@@ -117,7 +165,7 @@ namespace Client.View
         {
             ShowMessage("파일이 변경 되었습니다.", e.Name);
             mClient.StoreFile(new FileInfo(e.FullPath));
-            
+
         }
 
         private void OnRenamed(object source, RenamedEventArgs e)
