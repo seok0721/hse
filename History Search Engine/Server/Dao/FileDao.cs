@@ -3,6 +3,7 @@ using Reference.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace Server.Dao
 {
@@ -53,63 +54,215 @@ namespace Server.Dao
                .SingleOrDefault<FileModel>();
         }
 
-        public IList<FileModel> ReadFileList(String userId, String[] keywordArray)
+        public ArrayList ReadFileList(String userId, String[] keywordArray)
         {
             builder.Clear();
             builder
-                .AppendFormat(" SELECT USR_ID, FILE_ID, UNIQUE_ID, FILE_PATH,")
-                .AppendFormat("        FILE_NM, FILE_SZ, LAST_UPDATE_TM, REMOVE_YN")
-                .AppendFormat("     FROM ")
-                .AppendFormat("     (")
-                .AppendFormat("     SELECT MAX(C.FILE_WD_CNT) ID,")
-                .AppendFormat("            B.USR_ID, B.FILE_ID, B.UNIQUE_ID, B.FILE_PATH,")
-                .AppendFormat("            B.FILE_NM, B.FILE_SZ, B.LAST_UPDATE_TM, B.REMOVE_YN")
-                .AppendFormat("       FROM TBL_USER A")
-                .AppendFormat("      INNER JOIN TBL_FILE B")
-                .AppendFormat("         ON B.USR_ID  = A.USR_ID")
-                .AppendFormat("      INNER JOIN TBL_FILE_WORD C")
-                .AppendFormat("         ON C.USR_ID  = B.USR_ID")
-                .AppendFormat("        AND C.FILE_ID = B.FILE_ID")
-                .AppendFormat("        AND")
-                .AppendFormat("          (");
+                .AppendFormat(" SELECT CAST(A.FILE_ID AS VARCHAR) +")
+                .AppendFormat("        '|' + A.FILE_NM +")
+	            .AppendFormat("        '|' + CAST(A.FILE_SZ AS VARCHAR) +")
+                .AppendFormat("        '|' + CONVERT(VARCHAR, A.LAST_UPDATE_TM, 120)")
+                .AppendFormat("   FROM")
+                .AppendFormat("   (")
+                .AppendFormat("     SELECT A.USR_ID")
+                .AppendFormat("          , A.FILE_ID")
+                .AppendFormat("          , A.FILE_NM")
+                .AppendFormat("          , A.FILE_SZ")
+                .AppendFormat("          , A.FILE_RANK")
+                // .AppendFormat("          , DENSE_RANK() OVER(PARTITION BY A.FILE_RANK ORDER BY A.LAST_UPDATE_TM DESC) TIME_RANK")
+                .AppendFormat("          , LAST_UPDATE_TM")
+                .AppendFormat("          , B.HTML_SCORE *")
+                .AppendFormat("            CASE WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE,  -5, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE,  5, B.CREATE_TM)")
+                .AppendFormat("                 THEN 1.00")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -10, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 10, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.98")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -15, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 15, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.90")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -20, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 20, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.80")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -25, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 25, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.67")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -30, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 30, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.54")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -35, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 35, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.41")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -40, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 40, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.29")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -45, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 45, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.20")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -50, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 50, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.13")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -55, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 55, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.08")
+                .AppendFormat("                 WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE, -60, B.CREATE_TM) AND B.CREATE_TM")
+                .AppendFormat("                   OR A.LAST_UPDATE_TM BETWEEN B.CREATE_TM AND DATEADD(MINUTE, 60, B.CREATE_TM)")
+                .AppendFormat("                 THEN 0.05")
+                .AppendFormat("                 ELSE 0")
+                .AppendFormat("             END GAUSSIAN_SCORE")
+                .AppendFormat("       FROM")
+                .AppendFormat("       (");
+
+
+            builder
+                .AppendFormat(" SELECT A.USR_ID")
+                .AppendFormat("      , A.FILE_ID")
+                .AppendFormat("      , A.FILE_NM")
+                .AppendFormat("      , A.FILE_SZ")
+                .AppendFormat("      , A.LAST_UPDATE_TM")
+                // .AppendFormat(" 	 , SUM(A.FILE_WD_CNT) FILE_WD_CNT")
+                .AppendFormat(" 	 , DENSE_RANK() OVER(ORDER BY SUM(A.FILE_WD_CNT) DESC, A.LAST_UPDATE_TM DESC) FILE_RANK")
+                .AppendFormat("   FROM")
+                .AppendFormat("   (");
 
             for (int i = 0; i < keywordArray.Length; i++)
             {
-                if (keywordArray[i].Length == 0)
+                if (i > 0)
                 {
-                    continue;
+                    builder
+                        .AppendFormat("  UNION ALL");
                 }
 
-                if (i == 0)
+                builder
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    .AppendFormat("     	 , ISNULL(SUM(B.FILE_WD_CNT), 0) FILE_WD_CNT")
+                    .AppendFormat("          , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("      INNER JOIN TBL_FILE_WORD B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.FILE_ID = A.FILE_ID")
+                    .AppendFormat("        AND LOWER(B.FILE_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      WHERE A.USR_ID = 'admin'")
+                    .AppendFormat("      GROUP BY A.USR_ID")
+                    .AppendFormat("             , A.FILE_ID")
+                    .AppendFormat("             , A.FILE_NM")
+                    .AppendFormat("             , A.FILE_SZ")
+                    .AppendFormat("             , A.LAST_UPDATE_TM")
+                    .AppendFormat("      UNION ALL")
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    .AppendFormat("          , COUNT(CASE WHEN A.FILE_NM LIKE '%' + '{0}' + '%' THEN 1 ELSE NULL END) FILE_WD_CNT", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("     	 , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("      WHERE A.USR_ID = 'admin'")
+                    .AppendFormat("        AND A.FILE_NM LIKE '%' + '{0}' + '%' ", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      GROUP BY A.USR_ID")
+                    .AppendFormat("             , A.FILE_ID")
+                    .AppendFormat("             , A.FILE_NM")
+                    .AppendFormat("             , A.FILE_SZ")
+                    .AppendFormat("     		, A.LAST_UPDATE_TM");
+ 
+                /*
+                if (i > 0)
                 {
                     builder
-                        .AppendFormat("    C.FILE_WD LIKE '%{0}%'", keywordArray[i]);
+                        .AppendFormat("  UNION");
                 }
-                else
+
+                builder
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY B.FILE_WD_CNT DESC) FILE_RANK")
+                    .AppendFormat("          , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("      INNER JOIN TBL_FILE_WORD B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.FILE_ID = A.FILE_ID")
+                    .AppendFormat("        AND LOWER(B.FILE_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      WHERE A.USR_ID = :userId")
+                    .AppendFormat("      UNION")
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    // .AppendFormat("          , DENSE_RANK() OVER(ORDER BY COUNT(B.FILE_IO_TYPE) DESC) FILE_RANK")
+                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY SUM(C.FILE_WD_CNT) DESC) FILE_RANK")
+                    .AppendFormat("          , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("       LEFT OUTER JOIN TBL_FILE_IO_LOG B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.FILE_ID = A.FILE_ID")
+                    .AppendFormat("       LEFT OUTER JOIN TBL_FILE_WORD C")
+                    .AppendFormat("         ON C.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND C.FILE_ID = A.FILE_ID")
+                    .AppendFormat("      WHERE A.USR_ID = :userId")
+                    .AppendFormat("        AND LOWER(A.FILE_NM) LIKE '%' + LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      GROUP BY A.USR_ID")
+                    .AppendFormat("             , A.FILE_ID")
+                    .AppendFormat("             , A.FILE_NM")
+                    .AppendFormat("             , A.FILE_SZ")
+                    .AppendFormat("             , A.LAST_UPDATE_TM");
+                */
+            }
+            builder
+                .AppendFormat("   ) A")
+                .AppendFormat("  GROUP BY A.USR_ID")
+                .AppendFormat("         , A.FILE_ID")
+                .AppendFormat("         , A.FILE_NM")
+                .AppendFormat("         , A.FILE_SZ")
+                .AppendFormat("         , A.LAST_UPDATE_TM");
+
+            builder
+                .AppendFormat("      ) A")
+                .AppendFormat("      LEFT OUTER JOIN")
+                .AppendFormat("      (");
+
+            for (int i = 0; i < keywordArray.Length; i++)
+            {
+                if (i > 0)
                 {
                     builder
-                        .AppendFormat(" OR C.FILE_WD LIKE '%{0}%'", keywordArray[i]);
+                        .AppendFormat("  UNION");
                 }
+
+                builder
+                    .AppendFormat("     SELECT DISTINCT")
+                    .AppendFormat("            B.USR_ID")
+                    .AppendFormat("          , B.HTML_ID")
+                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY B.HTML_WD_CNT) HTML_SCORE")
+                    .AppendFormat("          , B.HTML_WD")
+                    .AppendFormat("          , A.CREATE_TM")
+                    .AppendFormat("       FROM TBL_HTML A")
+                    .AppendFormat("      INNER JOIN TBL_HTML_WORD B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.HTML_ID = A.HTML_ID")
+                    .AppendFormat("        AND LOWER(B.HTML_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      WHERE A.USR_ID = :userId");
             }
 
             builder
-                .AppendFormat("          )")
-                .AppendFormat("      WHERE A.USR_ID  = '{0}'", userId)
-                .AppendFormat("   GROUP BY B.USR_ID,")
-                .AppendFormat("            B.FILE_ID,")
-                .AppendFormat("            B.UNIQUE_ID,")
-                .AppendFormat("            B.FILE_PATH,")
-                .AppendFormat("            B.FILE_NM,")
-                .AppendFormat("            B.FILE_SZ,")
-                .AppendFormat("            B.LAST_UPDATE_TM,")
-                .AppendFormat("            B.REMOVE_YN")
-                .AppendFormat("     ) A")
-                .AppendFormat("  ORDER BY ID DESC");
+                .AppendFormat("      ) B")
+                .AppendFormat("        ON B.USR_ID = A.USR_ID")
+                .AppendFormat("   ) A")
+                .AppendFormat("  GROUP BY A.FILE_ID")
+                .AppendFormat("         , A.FILE_NM")
+                .AppendFormat("         , A.FILE_SZ")
+                .AppendFormat("         , A.LAST_UPDATE_TM")
+                .AppendFormat("  ORDER BY MAX(GAUSSIAN_SCORE) DESC")
+                .AppendFormat("         , MIN(FILE_RANK)");
+                // .AppendFormat("         , MIN(TIME_RANK)");
 
             ISQLQuery query = Session.CreateSQLQuery(builder.ToString());
-            query.AddEntity(typeof(FileModel));
+            query.SetParameter("userId", userId);
 
-            return query.List<FileModel>();
+            return (ArrayList)query.List();
         }
 
         public int ReadMaxFileId(String userId)

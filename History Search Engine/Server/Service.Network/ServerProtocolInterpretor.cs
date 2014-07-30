@@ -11,6 +11,8 @@ using Reference.Model;
 using Reference.Protocol;
 using Reference.Utility;
 using log4net;
+using kr.ac.kaist.swrc.jhannanum.hannanum;
+using kr.ac.kaist.swrc.jhannanum.comm;
 
 namespace Server.Service.Network
 {
@@ -152,7 +154,7 @@ namespace Server.Service.Network
                 return;
             }
 
-            String[] split = argument.Split(',');
+            String[] split = argument.Split(new char[] { ',' }, 2);
             HtmlModel mHtml = new HtmlModel();
             mHtml.UserId = userId;
             mHtml.HtmlId = htmlDao.ReadMaxHtmlId(userId) + 1;
@@ -163,13 +165,47 @@ namespace Server.Service.Network
             HtmlWord mHtmlWord = new HtmlWord();
             mHtmlWord.UserId = mHtml.UserId;
             mHtmlWord.HtmlId = mHtml.HtmlId;
-            mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml) + 1;
-            mHtmlWord.WordCount = 1;
 
-            foreach (String htmlWord in split[1].Trim().Split(' '))
+            // 2014-07-29 add by ks
+            Workflow workflow = WorkflowFactory.getPredefinedWorkflow(WorkflowFactory.WORKFLOW_NOUN_EXTRACTOR);
+            workflow.activateWorkflow(true);
+            workflow.analyze(split[1].Trim());
+
+            // foreach (String htmlWord in split[1].Trim().Split(' '))
+            foreach (Sentence s in workflow.getResultOfDocument(new Sentence(0, 0, false)))
             {
-                mHtmlWord.Word = htmlWord;
-                htmlWordDao.CreateHtmlWord(mHtmlWord);
+                Eojeol[] eojeolArray = s.Eojeols;
+                for (int i = 0; i < eojeolArray.Length; i++)
+                {
+                    if (eojeolArray[i].length == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (String htmlWord in eojeolArray[i].Morphemes)
+                    {
+                        mHtmlWord.Word = htmlWord.ToLower();
+                        mHtmlWord = htmlWordDao.ReadHtmlWordUsingWord(mHtmlWord);
+
+                        if (mHtmlWord == null)
+                        {
+                            mHtmlWord = new HtmlWord();
+                            mHtmlWord.UserId = mHtml.UserId;
+                            mHtmlWord.HtmlId = mHtml.HtmlId;
+                            mHtmlWord.HtmlWordId = htmlWordDao.ReadMaxHtmlWordId(mHtml) + 1;
+                            mHtmlWord.Word = htmlWord.ToLower();
+                            mHtmlWord.WordCount = 1;
+
+                            htmlWordDao.CreateHtmlWord(mHtmlWord);
+                        }
+                        else
+                        {
+                            mHtmlWord.WordCount += 1;
+
+                            htmlWordDao.UpdateHtmlWord(mHtmlWord);
+                        }
+                    }
+                }
             }
 
             SendResponse(ProtocolResponse.CommandOkay, "HTML 정보가 추가되었습니다.");
@@ -186,7 +222,7 @@ namespace Server.Service.Network
             logger.Info(argument);
             logger.Info("단어 전송을 위해 파일 정보 읽기를 시작합니다.");
 
-            String[] split = argument.Split(',');
+            String[] split = argument.Split(new char[] { ',' }, 2);
             FileModel mFile = new FileModel();
             mFile.UserId = userId;
             mFile.UniqueId = split[0];
@@ -211,48 +247,90 @@ namespace Server.Service.Network
             logger.Info(mFile.ToString());
 
             fileWordDao.DeleteFileWordAll(mFileWord); // 2014-07-25 ADD by KS
+            logger.Info("기존의 단어를 삭제");
+
+            // 2014-07-29 add by ks
+            Workflow workflow = WorkflowFactory.getPredefinedWorkflow(WorkflowFactory.WORKFLOW_NOUN_EXTRACTOR);
+            workflow.activateWorkflow(true);
+            workflow.analyze(split[1].Trim());
+
+            logger.Info("형태소 분석기 시작.");
+            // foreach (String htmlWord in split[1].Trim().Split(' '))
+            foreach (Sentence s in workflow.getResultOfDocument(new Sentence(0, 0, false)))
+            {
+                logger.Info("형태소 분석기 이터레이션.");
+
+                Eojeol[] eojeolArray = s.Eojeols;
+                for (int i = 0; i < eojeolArray.Length; i++)
+                {
+                    if (eojeolArray[i].length == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (String word in eojeolArray[i].Morphemes)
+                    {
+                        mFileWord.Word = word;
+
+                        logger.Info(word);
+                        mFileWord = fileWordDao.ReadFileWordUsingWord(mFileWord);
+
+                        if (mFileWord == null)
+                        {
+                            mFileWord = new FileWord();
+                            mFileWord.FileId = mFile.FileId;
+                            mFileWord.UserId = mFile.UserId;
+                            mFileWord.FileWordId = fileWordDao.ReadMaxFileWordId(mFile) + 1;
+                            mFileWord.Word = word;
+                            mFileWord.WordCount = 1;
+                            if (mFileWord.FileWordId == -1)
+                            {
+                                break;
+                            }
+                            fileWordDao.CreateFileWord(mFileWord);
+                        }
+                        else
+                        {
+                            mFileWord.WordCount += 1;
+
+                            fileWordDao.UpdateFileWord(mFileWord);
+                        }
+                    }
+                }
+            }
+
+            /*
             foreach (String word in split[1].Trim().Split(' '))
             {
                 mFileWord.Word = word;
 
                 logger.Info(word);
-                logger.Info("1111");
                 mFileWord = fileWordDao.ReadFileWordUsingWord(mFileWord);
-                logger.Info("2222");
 
                 if (mFileWord == null)
                 {
                     mFileWord = new FileWord();
-                    logger.Info("3333");
                     mFileWord.FileId = mFile.FileId;
-                    logger.Info("333311111111111");
                     mFileWord.UserId = mFile.UserId;
-                    logger.Info("33332222222222222");
                     mFileWord.FileWordId = fileWordDao.ReadMaxFileWordId(mFile) + 1;
-                    logger.Info("33333333333333333");
                     mFileWord.Word = word;
-                    logger.Info("3333444444444444");
                     mFileWord.WordCount = 1;
-                    logger.Info("33335555555555555");
                     if (mFileWord.FileWordId == -1)
                     {
                         break;
                     }
-                    logger.Info("4444");
                     fileWordDao.CreateFileWord(mFileWord);
-                    logger.Info("5555");
                 }
                 else
                 {
                     mFileWord.WordCount += 1;
 
-                    logger.Info("6666");
                     fileWordDao.UpdateFileWord(mFileWord);
-                    logger.Info("7777");
                 }
 
                 logger.Info(word);
             }
+            */
 
             logger.Info("파일 내용 저장이 종료되었습니다.");
 
@@ -314,11 +392,30 @@ namespace Server.Service.Network
 
             FileModel userFile = FileModel.FromString(argument);
             userFile.UserId = userId;
-            
+
             FileModel serverFile = fileDao.ReadFileUsingUniqueId(userFile);
+            FileIOLog mFileIOLog = new FileIOLog();
 
             if (serverFile != null)
             {
+                logger.Info("파일 로그를 남깁니다.");
+
+                mFileIOLog.UserId = serverFile.UserId;
+                mFileIOLog.IOTime = DateTime.Now;
+                mFileIOLog.FileId = serverFile.FileId;
+                mFileIOLog.FileIOLogSequence = fileIOLogDao.ReadMaxFileIOLogSequence(serverFile) + 1;
+
+                if (serverFile.Name == userFile.Name)
+                {
+                    mFileIOLog.IOType = "C";
+                }
+                else
+                {
+                    mFileIOLog.IOType = "R";
+                }
+
+                fileIOLogDao.CreateFileIOLog(mFileIOLog);
+
                 logger.Info("파일 최신화를 시작합니다.");
                 logger.Info(serverFile.ToString());
 
@@ -355,6 +452,15 @@ namespace Server.Service.Network
                 userFile.UserId = userId;
                 userFile.FileId = fileDao.ReadMaxFileId(userId) + 1;
                 fileDao.CreateFile(userFile);
+
+                logger.Info("파일 로그를 남깁니다.");
+
+                mFileIOLog.UserId = userId;
+                mFileIOLog.IOTime = DateTime.Now;
+                mFileIOLog.FileId = userFile.FileId;
+                mFileIOLog.IOType = "N";
+                mFileIOLog.FileIOLogSequence = fileIOLogDao.ReadMaxFileIOLogSequence(userFile) + 1;
+                fileIOLogDao.CreateFileIOLog(mFileIOLog);
 
                 serverDTP.SendToRequestNewFile();
                 serverDTP.ReceiveFileStream(userFile);

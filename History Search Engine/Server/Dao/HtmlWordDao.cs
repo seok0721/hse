@@ -41,6 +41,24 @@ namespace Server.Dao
                .SingleOrDefault<HtmlWord>();
         }
 
+        public HtmlWord ReadHtmlWordUsingWord(HtmlWord model)
+        {
+            Session.Clear();
+
+            ISQLQuery query = Session.CreateSQLQuery(
+                   " SELECT *" +
+                   "   FROM TBL_HTML_WORD" +
+                   "  WHERE USR_ID  = :userId" +
+                   "    AND HTML_ID = :htmlId" +
+                   "    AND HTML_WD = :htmlWord");
+            query.SetParameter("userId", model.UserId);
+            query.SetParameter("htmlId", model.HtmlId);
+            query.SetParameter("htmlWord", model.Word);
+            query.AddEntity(typeof(HtmlWord));
+
+            return (HtmlWord)query.UniqueResult();
+        }
+
         public IList<HtmlWord> ReadHtmlWordList(HtmlModel model)
         {
             ISQLQuery query = Session.CreateSQLQuery(
