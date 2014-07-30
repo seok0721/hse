@@ -271,7 +271,7 @@ namespace Server.Service.Network
                     diffOffset = int.Parse(ReadFromUserSocket(64));
                     diffLength = int.Parse(ReadFromUserSocket(64));
 
-                    logger.InfoFormat("{0},{1},{2}", flag, diffOffset, diffLength);
+                    logger.InfoFormat("변경내역: {0},{1},{2}", flag, diffOffset, diffLength);
 
                     if (flag == '0')
                     {

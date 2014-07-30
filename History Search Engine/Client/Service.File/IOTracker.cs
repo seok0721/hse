@@ -55,7 +55,9 @@ namespace Client.Service.File
         /// 감시할 파일 타입을 추가합니다.
         /// </summary>
         /// <param name="fileType">파일 타입 (예:txt)</param>
-        public void AddFileType(string fileType)
+        public void AddFileType(string fileType,
+            OnChangedHandler onChangeHandler,
+            OnRenamedHandler onRenamedHandler)
         {
             // 새 파일 감시자를 만듬. 한 파일 감시자는 한가지의 파일타입만 감시가능하기에...
             FileSystemWatcher newWatcher = new FileSystemWatcher();
@@ -72,25 +74,13 @@ namespace Client.Service.File
             newWatcher.IncludeSubdirectories = true;
 
             //이벤트 핸들러 추가.
-            newWatcher.Changed += new FileSystemEventHandler(mOnChanged);
-            newWatcher.Created += new FileSystemEventHandler(mOnChanged);
-            newWatcher.Deleted += new FileSystemEventHandler(mOnChanged);
-            newWatcher.Renamed += new RenamedEventHandler(mOnRenamed);
-             
+            newWatcher.Changed += new FileSystemEventHandler(onChangeHandler);
+            newWatcher.Created += new FileSystemEventHandler(onChangeHandler);
+            newWatcher.Deleted += new FileSystemEventHandler(onChangeHandler);
+            newWatcher.Renamed += new RenamedEventHandler(onRenamedHandler);
+
             //딕셔너리에 파일감시자 추가.
             watchers.Add(fileType, newWatcher);
-        }
-
-        /// <summary>
-        /// 여러개의 파일타입을 한번에 추가합니다.
-        /// </summary>
-        /// <param name="fileType">파일타입 스트링 배열</param>
-        public void AddFileType(string[] fileType)
-        {
-            foreach (string ft in fileType)
-            {
-                AddFileType(ft);
-            }
         }
 
         /// <summary>

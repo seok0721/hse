@@ -27,7 +27,7 @@ namespace Client.Service.File
             try
             {
                 powerPointApp = new PowerPoint.Application();
-                powerPointApp.Visible = MsoTriState.msoFalse;
+                //powerPointApp.Visible = MsoTriState.msoFalse;
                 multiPresentations = powerPointApp.Presentations;
 
                 MsoTriState trueState = MsoTriState.msoTrue;

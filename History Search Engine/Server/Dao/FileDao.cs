@@ -69,7 +69,7 @@ namespace Server.Dao
                 .AppendFormat("          , A.FILE_NM")
                 .AppendFormat("          , A.FILE_SZ")
                 .AppendFormat("          , A.FILE_RANK")
-                .AppendFormat("          , DENSE_RANK() OVER(PARTITION BY A.FILE_RANK ORDER BY A.LAST_UPDATE_TM DESC) TIME_RANK")
+                // .AppendFormat("          , DENSE_RANK() OVER(PARTITION BY A.FILE_RANK ORDER BY A.LAST_UPDATE_TM DESC) TIME_RANK")
                 .AppendFormat("          , LAST_UPDATE_TM")
                 .AppendFormat("          , B.HTML_SCORE *")
                 .AppendFormat("            CASE WHEN A.LAST_UPDATE_TM BETWEEN DATEADD(MINUTE,  -5, B.CREATE_TM) AND B.CREATE_TM")
@@ -113,8 +113,61 @@ namespace Server.Dao
                 .AppendFormat("       FROM")
                 .AppendFormat("       (");
 
+
+            builder
+                .AppendFormat(" SELECT A.USR_ID")
+                .AppendFormat("      , A.FILE_ID")
+                .AppendFormat("      , A.FILE_NM")
+                .AppendFormat("      , A.FILE_SZ")
+                .AppendFormat("      , A.LAST_UPDATE_TM")
+                // .AppendFormat(" 	 , SUM(A.FILE_WD_CNT) FILE_WD_CNT")
+                .AppendFormat(" 	 , DENSE_RANK() OVER(ORDER BY SUM(A.FILE_WD_CNT) DESC, A.LAST_UPDATE_TM DESC) FILE_RANK")
+                .AppendFormat("   FROM")
+                .AppendFormat("   (");
+
             for (int i = 0; i < keywordArray.Length; i++)
             {
+                if (i > 0)
+                {
+                    builder
+                        .AppendFormat("  UNION ALL");
+                }
+
+                builder
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    .AppendFormat("     	 , ISNULL(SUM(B.FILE_WD_CNT), 0) FILE_WD_CNT")
+                    .AppendFormat("          , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("      INNER JOIN TBL_FILE_WORD B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.FILE_ID = A.FILE_ID")
+                    .AppendFormat("        AND LOWER(B.FILE_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      WHERE A.USR_ID = 'admin'")
+                    .AppendFormat("      GROUP BY A.USR_ID")
+                    .AppendFormat("             , A.FILE_ID")
+                    .AppendFormat("             , A.FILE_NM")
+                    .AppendFormat("             , A.FILE_SZ")
+                    .AppendFormat("             , A.LAST_UPDATE_TM")
+                    .AppendFormat("      UNION ALL")
+                    .AppendFormat("     SELECT A.USR_ID")
+                    .AppendFormat("          , A.FILE_ID")
+                    .AppendFormat("          , A.FILE_NM")
+                    .AppendFormat("          , A.FILE_SZ")
+                    .AppendFormat("          , COUNT(CASE WHEN A.FILE_NM LIKE '%' + '{0}' + '%' THEN 1 ELSE NULL END) FILE_WD_CNT", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("     	 , A.LAST_UPDATE_TM")
+                    .AppendFormat("       FROM TBL_FILE A")
+                    .AppendFormat("      WHERE A.USR_ID = 'admin'")
+                    .AppendFormat("        AND A.FILE_NM LIKE '%' + '{0}' + '%' ", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      GROUP BY A.USR_ID")
+                    .AppendFormat("             , A.FILE_ID")
+                    .AppendFormat("             , A.FILE_NM")
+                    .AppendFormat("             , A.FILE_SZ")
+                    .AppendFormat("     		, A.LAST_UPDATE_TM");
+ 
+                /*
                 if (i > 0)
                 {
                     builder
@@ -139,20 +192,32 @@ namespace Server.Dao
                     .AppendFormat("          , A.FILE_ID")
                     .AppendFormat("          , A.FILE_NM")
                     .AppendFormat("          , A.FILE_SZ")
-                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY COUNT(B.FILE_IO_TYPE) DESC) FILE_RANK")
+                    // .AppendFormat("          , DENSE_RANK() OVER(ORDER BY COUNT(B.FILE_IO_TYPE) DESC) FILE_RANK")
+                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY SUM(C.FILE_WD_CNT) DESC) FILE_RANK")
                     .AppendFormat("          , A.LAST_UPDATE_TM")
                     .AppendFormat("       FROM TBL_FILE A")
                     .AppendFormat("       LEFT OUTER JOIN TBL_FILE_IO_LOG B")
                     .AppendFormat("         ON B.USR_ID  = A.USR_ID")
                     .AppendFormat("        AND B.FILE_ID = A.FILE_ID")
+                    .AppendFormat("       LEFT OUTER JOIN TBL_FILE_WORD C")
+                    .AppendFormat("         ON C.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND C.FILE_ID = A.FILE_ID")
                     .AppendFormat("      WHERE A.USR_ID = :userId")
-                    .AppendFormat("        AND LOWER(A.FILE_NM) LIKE '%' + LOWER('TXT') + '%'")
+                    .AppendFormat("        AND LOWER(A.FILE_NM) LIKE '%' + LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
                     .AppendFormat("      GROUP BY A.USR_ID")
                     .AppendFormat("             , A.FILE_ID")
                     .AppendFormat("             , A.FILE_NM")
                     .AppendFormat("             , A.FILE_SZ")
                     .AppendFormat("             , A.LAST_UPDATE_TM");
+                */
             }
+            builder
+                .AppendFormat("   ) A")
+                .AppendFormat("  GROUP BY A.USR_ID")
+                .AppendFormat("         , A.FILE_ID")
+                .AppendFormat("         , A.FILE_NM")
+                .AppendFormat("         , A.FILE_SZ")
+                .AppendFormat("         , A.LAST_UPDATE_TM");
 
             builder
                 .AppendFormat("      ) A")
@@ -163,35 +228,36 @@ namespace Server.Dao
             {
                 if (i > 0)
                 {
-                    builder.AppendFormat(" UNION");
+                    builder
+                        .AppendFormat("  UNION");
                 }
 
                 builder
-                    .AppendFormat(" SELECT DISTINCT")
-                    .AppendFormat("        B.USR_ID")
-                    .AppendFormat("      , B.HTML_ID")
-                    .AppendFormat("      , DENSE_RANK() OVER(ORDER BY B.HTML_WD_CNT) HTML_SCORE")
-                    .AppendFormat("      , B.HTML_WD")
-                    .AppendFormat("      , A.CREATE_TM")
-                    .AppendFormat("   FROM TBL_HTML A")
-                    .AppendFormat("  INNER JOIN TBL_HTML_WORD B")
-                    .AppendFormat("     ON B.USR_ID  = A.USR_ID")
-                    .AppendFormat("    AND B.HTML_ID = A.HTML_ID")
-                    .AppendFormat("    AND LOWER(B.HTML_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
-                    .AppendFormat("  WHERE A.USR_ID = :userId");
+                    .AppendFormat("     SELECT DISTINCT")
+                    .AppendFormat("            B.USR_ID")
+                    .AppendFormat("          , B.HTML_ID")
+                    .AppendFormat("          , DENSE_RANK() OVER(ORDER BY B.HTML_WD_CNT) HTML_SCORE")
+                    .AppendFormat("          , B.HTML_WD")
+                    .AppendFormat("          , A.CREATE_TM")
+                    .AppendFormat("       FROM TBL_HTML A")
+                    .AppendFormat("      INNER JOIN TBL_HTML_WORD B")
+                    .AppendFormat("         ON B.USR_ID  = A.USR_ID")
+                    .AppendFormat("        AND B.HTML_ID = A.HTML_ID")
+                    .AppendFormat("        AND LOWER(B.HTML_WD) LIKE LOWER('{0}') + '%'", keywordArray[i].Replace("\'", ""))
+                    .AppendFormat("      WHERE A.USR_ID = :userId");
             }
 
             builder
-                .AppendFormat("       ) B")
-                .AppendFormat("         ON B.USR_ID = A.USR_ID")
+                .AppendFormat("      ) B")
+                .AppendFormat("        ON B.USR_ID = A.USR_ID")
                 .AppendFormat("   ) A")
                 .AppendFormat("  GROUP BY A.FILE_ID")
                 .AppendFormat("         , A.FILE_NM")
                 .AppendFormat("         , A.FILE_SZ")
                 .AppendFormat("         , A.LAST_UPDATE_TM")
-                .AppendFormat("  ORDER BY MAX(GAUSSIAN_SCORE) DESC,")
-                .AppendFormat("           MIN(FILE_RANK),")
-                .AppendFormat("           MIN(TIME_RANK)");
+                .AppendFormat("  ORDER BY MAX(GAUSSIAN_SCORE) DESC")
+                .AppendFormat("         , MIN(FILE_RANK)");
+                // .AppendFormat("         , MIN(TIME_RANK)");
 
             ISQLQuery query = Session.CreateSQLQuery(builder.ToString());
             query.SetParameter("userId", userId);

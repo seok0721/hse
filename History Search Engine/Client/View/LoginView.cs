@@ -53,7 +53,7 @@ namespace Client.View
 
             if (mClient.Login(userId, HashUtils.HashMD5(password)))
             {
-                new TrayView(mClient);
+                new SearchUI(mClient);
                 this.Close();
             }
             else

@@ -48,8 +48,6 @@
             this.Other2 = new System.Windows.Forms.Label();
             this.Other3 = new System.Windows.Forms.Label();
             this.Other4 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.panel5 = new System.Windows.Forms.Panel();
             this.OtherPB4 = new System.Windows.Forms.PictureBox();
             this.OtherPB3 = new System.Windows.Forms.PictureBox();
             this.OtherPB2 = new System.Windows.Forms.PictureBox();
@@ -68,7 +66,6 @@
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
-            this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OtherPB4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.OtherPB3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.OtherPB2)).BeginInit();
@@ -162,7 +159,7 @@
             // FileName
             // 
             this.FileName.Font = new System.Drawing.Font("나눔고딕", 15F, System.Drawing.FontStyle.Bold);
-            this.FileName.Location = new System.Drawing.Point(273, 325);
+            this.FileName.Location = new System.Drawing.Point(272, 301);
             this.FileName.Name = "FileName";
             this.FileName.Size = new System.Drawing.Size(429, 30);
             this.FileName.TabIndex = 8;
@@ -208,6 +205,7 @@
             this.Other1.Size = new System.Drawing.Size(228, 16);
             this.Other1.TabIndex = 8;
             this.Other1.Text = "WordSample.docx";
+            this.Other1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Other1_MouseMove);
             // 
             // Other2
             // 
@@ -217,6 +215,7 @@
             this.Other2.Size = new System.Drawing.Size(228, 16);
             this.Other2.TabIndex = 8;
             this.Other2.Text = "WordSample.docx";
+            this.Other2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Other2_MouseMove);
             // 
             // Other3
             // 
@@ -226,6 +225,7 @@
             this.Other3.Size = new System.Drawing.Size(228, 16);
             this.Other3.TabIndex = 8;
             this.Other3.Text = "WordSample.docx";
+            this.Other3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Other3_MouseMove);
             // 
             // Other4
             // 
@@ -235,26 +235,7 @@
             this.Other4.Size = new System.Drawing.Size(228, 16);
             this.Other4.TabIndex = 8;
             this.Other4.Text = "WordSample.docx";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("나눔고딕", 8.999999F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.label7.Location = new System.Drawing.Point(17, 2);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(23, 14);
-            this.label7.TabIndex = 1;
-            this.label7.Text = "Url";
-            // 
-            // panel5
-            // 
-            this.panel5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(230)))), ((int)(((byte)(231)))));
-            this.panel5.Controls.Add(this.label7);
-            this.panel5.Location = new System.Drawing.Point(0, 294);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(271, 19);
-            this.panel5.TabIndex = 9;
+            this.Other4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Other4_MouseMove);
             // 
             // OtherPB4
             // 
@@ -304,7 +285,7 @@
             // MainIcon
             // 
             this.MainIcon.Image = global::Client.Properties.Resources.xlsxIcon;
-            this.MainIcon.Location = new System.Drawing.Point(386, 111);
+            this.MainIcon.Location = new System.Drawing.Point(385, 87);
             this.MainIcon.Name = "MainIcon";
             this.MainIcon.Size = new System.Drawing.Size(200, 202);
             this.MainIcon.TabIndex = 5;
@@ -406,7 +387,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.ClientSize = new System.Drawing.Size(704, 612);
+            this.ClientSize = new System.Drawing.Size(704, 462);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.pictureBox2);
@@ -415,7 +396,6 @@
             this.Controls.Add(this.label6);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.pictureBox5);
-            this.Controls.Add(this.panel5);
             this.Controls.Add(this.Other4);
             this.Controls.Add(this.Other3);
             this.Controls.Add(this.OtherPB4);
@@ -442,8 +422,6 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
-            this.panel5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OtherPB4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.OtherPB3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.OtherPB2)).EndInit();
@@ -487,8 +465,6 @@
         private System.Windows.Forms.Label Other3;
         private System.Windows.Forms.PictureBox OtherPB4;
         private System.Windows.Forms.Label Other4;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox2;
