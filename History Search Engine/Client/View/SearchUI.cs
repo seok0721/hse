@@ -46,6 +46,8 @@ namespace Client.View
         private volatile PictureBox  [] otherFileIcons = new PictureBox[4];
         private volatile Label[] otherFiles = new Label[4];
 
+        private IOTracker track = null;
+
         //GlobalKeyboardHook ghk = new GlobalKeyboardHook();
 
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -94,7 +96,7 @@ namespace Client.View
             //ghk.HookedKeys.Add(Keys.F12);
             //ghk.KeyDown += new KeyEventHandler(Hooking);
 
-            //init();
+            init();
 
 
         }
@@ -117,12 +119,68 @@ namespace Client.View
             OnChangedHandler onChangeHandler = new OnChangedHandler(OnChanged);
             OnRenamedHandler onRenamedHandler = new OnRenamedHandler(OnRenamed);
 
-            IOTracker track = new IOTracker("C:\\", onChangeHandler, onRenamedHandler);
+            track = new IOTracker("C:\\", onChangeHandler, onRenamedHandler);
 
-            
 
-            track.AddFileType("txt");
-            track.AddFileType("ppt");
+
+            track.AddFileType("docx",
+                 (s, e) =>
+                 {
+                     ShowMessage("파일이 변경 되었습니다.", e.Name);
+                     if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                     {
+                         mClient.StoreFileWord(
+                             new FileInfo(e.FullPath.Replace("~$", "")),
+                             new MSWordReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                             .Replace("\r", " ").Replace("\n", " "));
+
+                     }
+                 },
+                 (s, e) =>
+                 {
+                     ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+
+
+                 }
+                 );
+
+            track.AddFileType("pptx",
+                (s, e) =>
+                {
+                    ShowMessage("파일이 변경 되었습니다.", e.Name);
+                    if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+                    {
+                        mClient.StoreFileWord(
+                            new FileInfo(e.FullPath.Replace("~$", "")),
+                            new MSPowerPointReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+                            .Replace("\r", " ").Replace("\n", " "));
+
+                    }
+                },
+                (s, e) =>
+                {
+                    ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+                }
+                );
+
+            //track.AddFileType("xlsx",
+            //    (s, e) =>
+            //    {
+            //        ShowMessage("파일이 변경 되었습니다.", e.Name);
+            //        if (mClient.StoreFile(new FileInfo(e.FullPath.Replace("~$", ""))))
+            //        {
+            //            mClient.StoreFileWord(
+            //                new FileInfo(e.FullPath.Replace("~$", "")),
+            //                new MSExcelReader(e.FullPath.Replace("~$", "")).Read().Replace("\r\n", " ")
+            //                .Replace("\r", " ").Replace("\n", " "));
+
+            //        }
+            //    },
+            //    (s, e) =>
+            //    {
+            //        ShowMessage("Rename", e.OldFullPath + "to " + e.FullPath);
+            //    }
+            //    );
             try
             {
                 track.StartWatch();
@@ -137,10 +195,64 @@ namespace Client.View
         {
             string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string pathDownload = Path.Combine(pathUser, "Downloads");
+            track.StopWatch();
             if (mClient.RetriveFile(fileLists[0].FileId, pathDownload, fileLists[0].Name))
             {
                 System.Diagnostics.Process.Start(Path.Combine(pathDownload, fileLists[0].Name));
             }
+            track.StartWatch();
+
+        }
+
+        void Other1_DoubleClick(object sender, EventArgs e)
+        {
+            string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string pathDownload = Path.Combine(pathUser, "Downloads");
+            track.StopWatch();
+            if (mClient.RetriveFile(fileLists[0].FileId, pathDownload, fileLists[1].Name))
+            {
+                System.Diagnostics.Process.Start(Path.Combine(pathDownload, fileLists[1].Name));
+            }
+            track.StartWatch();
+
+        }
+
+        void Other2_DoubleClick(object sender, EventArgs e)
+        {
+            string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string pathDownload = Path.Combine(pathUser, "Downloads");
+            track.StopWatch();
+            if (mClient.RetriveFile(fileLists[0].FileId, pathDownload, fileLists[2].Name))
+            {
+                System.Diagnostics.Process.Start(Path.Combine(pathDownload, fileLists[2].Name));
+            }
+            track.StartWatch();
+
+        }
+
+        void Other3_DoubleClick(object sender, EventArgs e)
+        {
+            string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string pathDownload = Path.Combine(pathUser, "Downloads");
+            track.StopWatch();
+            if (mClient.RetriveFile(fileLists[0].FileId, pathDownload, fileLists[3].Name))
+            {
+                System.Diagnostics.Process.Start(Path.Combine(pathDownload, fileLists[3].Name));
+            }
+            track.StartWatch();
+
+        }
+
+        void Other4_DoubleClick(object sender, EventArgs e)
+        {
+            string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string pathDownload = Path.Combine(pathUser, "Downloads");
+            track.StopWatch();
+            if (mClient.RetriveFile(fileLists[0].FileId, pathDownload, fileLists[4].Name))
+            {
+                System.Diagnostics.Process.Start(Path.Combine(pathDownload, fileLists[4].Name));
+            }
+            track.StartWatch();
 
         }
 
@@ -192,7 +304,7 @@ namespace Client.View
                         
 
                         
-                        for (i = 1; i < fileLists.Count; i++)
+                        for (i = 1; i < fileLists.Count && i -1 < 4; i++)
                         {
                             otherFiles[i - 1].Text = fileLists[i].Name;
                             otherFiles[i - 1].Show();
@@ -216,7 +328,7 @@ namespace Client.View
                             otherFiles[i - 1].Hide();
                             otherFileIcons[i - 1].Hide();
                         }
-                        Height = 600;
+                        Height = 500;
                     }
                     else
                     {
@@ -321,7 +433,9 @@ namespace Client.View
                        
                         string currentDirectory = Path.GetDirectoryName(E.FullPath);
 
+                        track.StopWatch();
                         mClient.RetriveFile(fileLists[0].FileId, currentDirectory, fileLists[0].Name);
+                        track.StartWatch();
                         File.Delete(string.Format("{0}\\{1}{2}.tmp", currentDirectory, DRAG_SOURCE_PREFIX, TopMatch.Text));
                     });
                     tempWatcher.Path = "C:\\";
@@ -347,6 +461,200 @@ namespace Client.View
             }
 
         }
+
+        private void Other1_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (e.Button == MouseButtons.None)
+            {
+                return;
+            }
+            if (itemDragStart && objDragItem != null)
+            {
+
+                dragItemTempFileName = string.Format("{0}{1}{2}.tmp", Path.GetTempPath(), DRAG_SOURCE_PREFIX, Other1.Text);
+                try
+                {
+                    CreateDragItemTempFile(dragItemTempFileName);
+                    FileSystemWatcher tempWatcher = new FileSystemWatcher();
+                    tempWatcher.Created += new FileSystemEventHandler((S, E) =>
+                    {
+
+                        string currentDirectory = Path.GetDirectoryName(E.FullPath);
+
+                        track.StopWatch();
+                        mClient.RetriveFile(fileLists[0].FileId, currentDirectory, fileLists[0].Name);
+                        track.StartWatch();
+                        File.Delete(string.Format("{0}\\{1}{2}.tmp", currentDirectory, DRAG_SOURCE_PREFIX, Other1.Text));
+                    });
+                    tempWatcher.Path = "C:\\";
+                    tempWatcher.Filter = "*.tmp";
+
+                    tempWatcher.IncludeSubdirectories = true;
+                    tempWatcher.EnableRaisingEvents = true;
+
+                    //MessageBox.Show(dragItemTempFileName, dragItemTempFileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    string[] fileList = new string[] { dragItemTempFileName };
+                    DataObject fileDragData = new DataObject(DataFormats.FileDrop, fileList);
+                    DoDragDrop(fileDragData, DragDropEffects.Move);
+                    tempWatcher.EnableRaisingEvents = false;
+                    ClearDragData();
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "DragNDrop Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+        private void Other2_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (e.Button == MouseButtons.None)
+            {
+                return;
+            }
+            if (itemDragStart && objDragItem != null)
+            {
+
+                dragItemTempFileName = string.Format("{0}{1}{2}.tmp", Path.GetTempPath(), DRAG_SOURCE_PREFIX, Other2.Text);
+                try
+                {
+                    CreateDragItemTempFile(dragItemTempFileName);
+                    FileSystemWatcher tempWatcher = new FileSystemWatcher();
+                    tempWatcher.Created += new FileSystemEventHandler((S, E) =>
+                    {
+
+                        string currentDirectory = Path.GetDirectoryName(E.FullPath);
+
+                        track.StopWatch();
+                        mClient.RetriveFile(fileLists[0].FileId, currentDirectory, fileLists[0].Name);
+                        track.StartWatch();
+                        File.Delete(string.Format("{0}\\{1}{2}.tmp", currentDirectory, DRAG_SOURCE_PREFIX, Other2.Text));
+                    });
+                    tempWatcher.Path = "C:\\";
+                    tempWatcher.Filter = "*.tmp";
+
+                    tempWatcher.IncludeSubdirectories = true;
+                    tempWatcher.EnableRaisingEvents = true;
+
+                    //MessageBox.Show(dragItemTempFileName, dragItemTempFileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    string[] fileList = new string[] { dragItemTempFileName };
+                    DataObject fileDragData = new DataObject(DataFormats.FileDrop, fileList);
+                    DoDragDrop(fileDragData, DragDropEffects.Move);
+                    tempWatcher.EnableRaisingEvents = false;
+                    ClearDragData();
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "DragNDrop Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+        private void Other3_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (e.Button == MouseButtons.None)
+            {
+                return;
+            }
+            if (itemDragStart && objDragItem != null)
+            {
+
+                dragItemTempFileName = string.Format("{0}{1}{2}.tmp", Path.GetTempPath(), DRAG_SOURCE_PREFIX, Other3.Text);
+                try
+                {
+                    CreateDragItemTempFile(dragItemTempFileName);
+                    FileSystemWatcher tempWatcher = new FileSystemWatcher();
+                    tempWatcher.Created += new FileSystemEventHandler((S, E) =>
+                    {
+
+                        string currentDirectory = Path.GetDirectoryName(E.FullPath);
+
+                        track.StopWatch();
+                        mClient.RetriveFile(fileLists[0].FileId, currentDirectory, fileLists[0].Name);
+                        track.StartWatch();
+                        File.Delete(string.Format("{0}\\{1}{2}.tmp", currentDirectory, DRAG_SOURCE_PREFIX, Other3.Text));
+                    });
+                    tempWatcher.Path = "C:\\";
+                    tempWatcher.Filter = "*.tmp";
+
+                    tempWatcher.IncludeSubdirectories = true;
+                    tempWatcher.EnableRaisingEvents = true;
+
+                    //MessageBox.Show(dragItemTempFileName, dragItemTempFileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    string[] fileList = new string[] { dragItemTempFileName };
+                    DataObject fileDragData = new DataObject(DataFormats.FileDrop, fileList);
+                    DoDragDrop(fileDragData, DragDropEffects.Move);
+                    tempWatcher.EnableRaisingEvents = false;
+                    ClearDragData();
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "DragNDrop Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+        private void Other4_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (e.Button == MouseButtons.None)
+            {
+                return;
+            }
+            if (itemDragStart && objDragItem != null)
+            {
+
+                dragItemTempFileName = string.Format("{0}{1}{2}.tmp", Path.GetTempPath(), DRAG_SOURCE_PREFIX, Other4.Text);
+                try
+                {
+                    CreateDragItemTempFile(dragItemTempFileName);
+                    FileSystemWatcher tempWatcher = new FileSystemWatcher();
+                    tempWatcher.Created += new FileSystemEventHandler((S, E) =>
+                    {
+
+                        string currentDirectory = Path.GetDirectoryName(E.FullPath);
+
+                        track.StopWatch();
+                        mClient.RetriveFile(fileLists[0].FileId, currentDirectory, fileLists[0].Name);
+                        track.StartWatch();
+                        File.Delete(string.Format("{0}\\{1}{2}.tmp", currentDirectory, DRAG_SOURCE_PREFIX, Other4.Text));
+                    });
+                    tempWatcher.Path = "C:\\";
+                    tempWatcher.Filter = "*.tmp";
+
+                    tempWatcher.IncludeSubdirectories = true;
+                    tempWatcher.EnableRaisingEvents = true;
+
+                    //MessageBox.Show(dragItemTempFileName, dragItemTempFileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    string[] fileList = new string[] { dragItemTempFileName };
+                    DataObject fileDragData = new DataObject(DataFormats.FileDrop, fileList);
+                    DoDragDrop(fileDragData, DragDropEffects.Move);
+                    tempWatcher.EnableRaisingEvents = false;
+                    ClearDragData();
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "DragNDrop Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        }
+
 
         private void CreateDragItemTempFile(string fileName)
         {
