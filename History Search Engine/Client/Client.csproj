@@ -73,6 +73,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Service.File\IOTracker.cs" />
     <Compile Include="Service.File\MSExcelReader.cs" />
     <Compile Include="Service.File\MSPowerPointReader.cs" />
@@ -85,11 +90,18 @@
     <Compile Include="Service.Network\UserDataTransferProcess.cs" />
     <Compile Include="Service.Network\UserProtocolInterpretor.cs" />
     <Compile Include="Utility\FileExtensionManager.cs" />
+    <Compile Include="Utility\KeyboardHook.cs" />
     <Compile Include="View\LoginView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\LoginView.Designer.cs">
       <DependentUpon>LoginView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\SearchUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\SearchUI.Designer.cs">
+      <DependentUpon>SearchUI.cs</DependentUpon>
     </Compile>
     <Compile Include="View\TrayView.cs">
       <SubType>Form</SubType>
@@ -172,8 +184,16 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\LoginView.resx">
       <DependentUpon>LoginView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\SearchUI.resx">
+      <DependentUpon>SearchUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\TrayView.resx">
       <DependentUpon>TrayView.cs</DependentUpon>
@@ -188,6 +208,39 @@
       <Project>{af7546dd-1765-4c9a-a1bf-fde08cfd85a1}</Project>
       <Name>Reference</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\docIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\docSmallIcon2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pptIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pptSmallIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsxIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xlsxSmallIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
