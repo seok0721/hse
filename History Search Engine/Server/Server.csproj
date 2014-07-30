@@ -55,7 +55,8 @@
       <HintPath>..\Third Party\Apache\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="NHanNanum">
+    <Reference Include="NHanNanum, Version=1.0.5012.25310, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Third Party\NHanNanum\NHanNanum.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">

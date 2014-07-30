@@ -44,11 +44,16 @@ namespace Server.Dao
             builder.Clear();
             builder
                 .AppendFormat(" DELETE FROM TBL_FILE_WORD")
-                .AppendFormat("  WHERE USR_ID  = '{0}'", model.UserId)
-                .AppendFormat("    AND FILE_ID = '{1}'", model.FileId);
+                .AppendFormat("  WHERE USR_ID  = :userId")
+                .AppendFormat("    AND FILE_ID = :fileId");
 
             Session.Clear();
-            Session.Delete(builder.ToString());
+
+            ISQLQuery query = Session.CreateSQLQuery(builder.ToString());
+            query.SetParameter("userId", model.UserId);
+            query.SetParameter("fileId", model.FileId);
+            query.ExecuteUpdate();
+
             Session.Flush();
         }
 
